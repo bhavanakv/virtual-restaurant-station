@@ -146,6 +146,23 @@
                                 });
                             });
                         });
+
+                        $("#party").click(function(){
+                            $("#book_card").css("display","none");
+                            $("#party_card").css("display","block");
+                            $("#pbook").click(function(){
+                                var hall = $("#hall").val();
+                                var date = $("#pdate").pickadate('picker').get('value');
+                                var time = $("#ptime").pickatime('picker').get('value');
+                                console.log(date+" "+time+" "+hall);
+                                $.post("http://localhost:8080/api/pbook",{username,hall,date,time},(data)=>{
+                                    if(!data.success)
+                                        alert(data.message);
+                                    else
+                                        Materialize.toast(data.message,2000,"rounded");
+                                });
+                            });
+                        });
                         
                         $("#logout").click(function(){
                             localStorage.removeItem("token");
@@ -173,7 +190,7 @@
             <li><a id="review">Review a restaurant</a></li>
             <li><div class="divider"></div></li>
             <li><a class="subheader"><i class="material-icons">cake</i> Party hall</a></li>
-            <li><a href="#!">Book a party hall</a></li>
+            <li><a id="party">Book a party hall</a></li>
             <li><a href="#!"></a></li>
         </ul>
         <a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a>
@@ -291,6 +308,47 @@
                     </div>  
                 </div>    
             </div>
-        </div> 
+        </div>
+        <div class="row">
+            <div class="col s6 offset-s4 offset-m4">
+                <div class="card" id="party_card" style="display:none">
+                    <br>
+                    <h4><span class="orange-text" style="padding-left:140px">Book a party hall</span></h4>
+                    <div class="card-content">
+                        <div class="row">
+                            <p class="center">Please enter the details to book party hall</p>
+                            <form class="col s12">
+                                <div class="row">
+                                    <div class="input-field col s10 center">
+                                        <i class="material-icons prefix">cake</i>
+                                        <input id="hall" type="text" class="validate" required>
+                                        <label for="hall">Enter the party hall name</label>
+                                    </div>
+                                </div>
+                            </form>
+                            <form class="col s12">
+                                <div class="row">
+                                    <div class="input-field col s10 center">
+                                        <i class="material-icons prefix">event_note</i>
+                                        <input id="pdate" type="text" class="datepicker" required>
+                                        <label for="pdate">Select a date</label>
+                                    </div>
+                                </div>
+                            </form>
+                            <form class="col s12">
+                                <div class="row">
+                                    <div class="input-field col s10 center">
+                                        <i class="material-icons prefix">restore</i>
+                                        <input id="ptime" type="text" class="timepicker" required></textarea>
+                                        <label for="ptime">Select a time</label>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <a class="btn waves-effect waves-light brown center" id="pbook">Book the hall</a>
+                    </div>  
+                </div>    
+            </div>
+        </div>  
     </body>
 </html>

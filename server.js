@@ -424,7 +424,7 @@ app.post("/api/tbook",function(req,res){
                     return;
                 }
             });
-            con.query("select sum(tables) as total from reservation where d=? and t=?",[fdate,ftime],function(err4,r,fields){
+            con.query("select sum(tables) as total from reservation where d=? and t=? and ruser=?",[fdate,ftime,ruser],function(err4,r,fields){
                 if(err) throw err;
                 if(!r[0].total)
                     table = 0;
@@ -445,6 +445,34 @@ app.post("/api/tbook",function(req,res){
                 else
                     res.end(JSON.stringify({success:false,message:"Sorry, couldn't book because it was out of the limit."}));
             }); 
+        }
+    }); 
+});
+
+//party hall booking
+app.post("/api/pbook",function(req,res){
+    res.writeHead(200,{"Content-Type":"application/json"});
+    let {username,hall,date,time} = req.body;
+    let fdate = moment(new Date(date)).format("YYYY-MM-DD");
+    console.log(fdate);
+    var puser;
+    let ftime = moment(time, "h:mm A").format("H:mm");
+    connection();
+    con.query("select username from party where name=?",[hall],function(err,row,fields){
+        if(err) throw err;
+        if(!row.length) {
+            res.end(JSON.stringify({success:false, message:"Party hall does not exist"}));
+            return;
+        }
+        else {
+            puser = row[0].username;
+            con.query("insert into p_reserve values(?,?,?,?)",[username,puser,fdate,ftime],function(err2,result){
+                if(err2)  {
+                    res.end(JSON.stringify({success:false,message: "Sorry, this slot has already been booked"}));
+                }
+                else    
+                    res.end(JSON.stringify({success:true,message: "Party hall has been booked successfully!!"}));
+            });
         }
     }); 
 });
