@@ -1,0 +1,97 @@
+<html>
+    <head>
+        <title>Sign up page</title>
+        <meta name = "viewport" content = "width = device-width, initial-scale = 1">      
+        <link rel = "stylesheet"
+           href = "https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel = "stylesheet"
+           href = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <script type = "text/javascript"
+           src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>           
+        <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js">
+        </script> 
+        <script type="text/javascript">
+            $(document).ready(function(){
+               $(".button-collapse").sideNav({
+                    menuWidth: 300
+               });
+            });
+        </script>
+        <style>
+                img {
+                    display: block; 
+                    max-width: 100%;
+                } 
+                .blur{
+                    -webkit-filter: blur(2px); /* Safari */
+                    -moz-filter: blur(2px); /* Firefox */
+                    -ms-filter: blur(2px); /* IE/Edge */
+                    filter: blur(2px);
+                }
+                .background { 
+                    position: relative;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%; /* Equal to our image */
+                    background-color: rgba(0,0,0,0.4);
+                }
+                .foreground {
+                    position: absolute; /* Overlap the previous div */
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(0,0,0,0.4);/* transparent background */
+                }
+                h3 {
+                    text-align: center;
+                    color: whitesmoke;
+                } 
+                h5 {
+                    text-align: center;
+                    color: whitesmoke;
+                } 
+            html {
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif
+        
+          }
+          body {
+              color: whitesmoke;
+          }
+            </style>
+    </head>
+    <body>
+        <div class="background">
+            <img style="float: right" class="blur" src="restaurant3.jpg" width="100%" height="100%">
+            <div class="foreground">
+                <ul id="slide-out" class="side-nav">
+                        <li><div class="user-view">
+                            <br>
+                            <a href="#!user"><img class="circle" src="logo.jpg" style="border:2px solid #420707"></a>
+                        </div></li>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <li><a href="restaurant.html"><i class="material-icons">home</i> Home</a></li>
+                        <li><a href="user_signup.html"><i class="material-icons">face</i> User</a></li>
+                        <li><a href="resto_signup.html"><i class="material-icons">restaurant</i> Add  a restaurant</a></li>
+                        <li><a href="party_signup.html"><i class="material-icons">cake</i> Add a party hall</a></li>
+                </ul>
+                    <a href="#" data-activates="slide-out" class="button-collapse"><i style="color: white" class="material-icons medium">menu</i></a>
+                    <h3>Welcome!!!</h3>
+                    <br>
+                    <h5>Few more steps to go...</h5>
+                    <h5>Fill in the details to sign up and enjoy our services.</h5>
+                    <h5>Press the menu icon on top to sign up.</h5>
+            </div>
+        </div>
+    </body>
+</html>
