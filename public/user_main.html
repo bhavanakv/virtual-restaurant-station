@@ -139,10 +139,10 @@
                                 var tables = $("#tables").val();
                                 var promo = $("#code").val();
                                 $.post("http://localhost:8080/api/tbook",{username,restaurant,date,time,tables,promo},(data)=>{
-                                    if(!data.success) 
-                                        Materialize.toast("Problem in booking");
+                                    if(!data.success)
+                                        alert(data.message);
                                     else
-                                        Materialize.toast("Your table has been booked successfully");
+                                        Materialize.toast(data.message,2000,"rounded");
                                 });
                             });
                         });
@@ -237,7 +237,7 @@
             <div class="col s6 offset-s4 offset-m4">
                 <div class="card" id="book_card" style="display:none">
                     <br>
-                    <h4><span class="orange-text" style="padding-left:140px">Review a restaurant</span></h4>
+                    <h4><span class="orange-text" style="padding-left:140px">Book a table</span></h4>
                     <div class="card-content">
                         <div class="row">
                             <p class="center">Please enter the details to book table</p>
@@ -253,15 +253,16 @@
                             <form class="col s12">
                                 <div class="row">
                                     <div class="input-field col s10 center">
-                                        <i class="material-icons prefix">location_on</i>
+                                        <i class="material-icons prefix">event_note</i>
                                         <input id="date" type="text" class="datepicker" required>
+                                        <label for="date">Select a date</label>
                                     </div>
                                 </div>
                             </form>
                             <form class="col s12">
                                 <div class="row">
                                     <div class="input-field col s10 center">
-                                        <i class="material-icons prefix">create</i>
+                                        <i class="material-icons prefix">restore</i>
                                         <input id="time" type="text" class="timepicker" required></textarea>
                                         <label for="time">Select a time</label>
                                     </div>
@@ -270,7 +271,7 @@
                             <form class="col s12"> 
                                 <div class="row">  
                                     <div class="input-field col s10 center">
-                                        <i class="material-icons prefix"></i>
+                                        <i class="material-icons prefix">event_seat</i>
                                         <input id="tables" type="number" class="validate" required>
                                         <label for="tables">Number of tables</label>
                                     </div>

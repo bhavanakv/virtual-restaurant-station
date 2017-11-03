@@ -3,7 +3,6 @@ var cors = require("cors");
 var mysql = require("mysql");
 let app = express();
 let bodyParser = require("body-parser");
-var database = require("./db.js");
 var bcrypt = require("bcrypt");
 var dotenv = require("dotenv");
 var jwt = require("jsonwebtoken");
@@ -404,12 +403,50 @@ app.post("/api/add_review",function(req,res){
 app.post("/api/tbook",function(req,res){
     res.writeHead(200,{"Content-Type":"application/json"});
     let {username,restaurant,date,time,tables,promo} = req.body;
-    let fdate = new Date(dateṭ); 
-    console.log(date);
+    let fdate = moment(new Date(date)).format("YYYY-MM-DD");
     console.log(fdate);
-    console.log(moment(time, "h:m A").format("H:M"));
+    var ruser,available,table;
+    let ftime = moment(time, "h:mm A").format("H:mm");
     connection();
-    
+    con.query("select username,tables from restaurant where name=?",[restaurant],function(err,row,fields){
+        if(err) throw err;
+        if(!row.length) {
+            res.end(JSON.stringify({success:false, message:"Restaurant does not exist"}));
+            return;
+        }
+        else {
+            ruser = row[0].username;
+            available = row[0].tables;
+            con.query("select * from offers where code=?",[promo],function(err1,rows,fields){
+                if(err1) throw err1;
+                if(!rows.length) {
+                    res.end(JSON.stringify({success:false,message: "Promo code not valid"}));
+                    return;
+                }
+            });
+            con.query("select sum(tables) as total from reservation where d=? and t=?",[fdate,ftime],function(err4,r,fields){
+                if(err) throw err;
+                if(!r[0].total)
+                    table = 0;
+                else    
+                    table = r[0].total;
+                console.log(table); 
+                tables = Number(tables);
+                console.log(tables);
+                if(tables+table<=available) {
+                    con.query("insert into reservation values(?,?,?,?,?,?)",[username,ruser,promo,tables,fdate,ftime],function(err2,result){
+                        if(err2)  {
+                            res.end(JSON.stringify({success:false,message: "Sorry, this slot has already been booked"}));
+                        }
+                        else    
+                            res.end(JSON.stringify({success:true,message: "Your table has been booked successfully!!"}));
+                    });
+                }
+                else
+                    res.end(JSON.stringify({success:false,message:"Sorry, couldn't book because it was out of the limit."}));
+            }); 
+        }
+    }); //4 is available and 2 is the no of tables that are booked on same date and same time
 });
 
 app.listen(8080, (err, res) => {
