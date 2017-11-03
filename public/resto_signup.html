@@ -1,0 +1,130 @@
+<html>
+    <head>
+        <title>Add a Restaurant</title>
+        <meta name = "viewport" content = "width = device-width, initial-scale = 1">      
+        <link rel = "stylesheet" href = "https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel = "stylesheet" href = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <script type = "text/javascript"
+            src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>           
+        <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js">
+        </script>
+         <script type="text/javascript">
+            $(document).ready(function() {
+            $('select').material_select();
+            });
+         </script>
+        <style>
+            .center{
+                position: relative;
+                left: 50%;
+                transform: translateX(-50%);
+            }  
+html {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif
+
+  }       
+  body {
+      background-image: url("login.jpg");
+  }
+        </style>
+    </head>
+    <body>
+        <script>
+            $(document).ready(function(){
+                $("#rsignup").click(function(){
+                    let name=$("#name").val();
+                    let username=$("#username").val();
+                    let password=$("#password").val();
+                    let location=$("#location").val();
+                    let type=$("#type option:selected").text();
+                    let table=$("#table").val();
+                    $.post("http://localhost:8080/api/rsignup",{name,username,password,location,type,table},(data)=>{
+                        if(data.success) {
+                        Materialize.toast("Registered successfully!", 2000,'rounded');
+                            setTimeout(() => {
+                            window.location="resto.html";
+                            }, 2000);
+                        }
+                        else
+                            Materialize.toast(data.message,3000,'rounded');
+                });
+            });
+        });
+        </script>
+        <nav>
+            <div class="nav-wrapper brown darken-2">
+                <a href="#" class="brand-logo center">Add a Restaurant</a>
+                <a href="restaurant.html"><i class="material-icons">arrow_back</i></a>
+            </div>
+        </nav>
+        <br>
+        <br>
+        <div class="row">
+        <div class="col s6 center">   
+        <div class="card-panel z-depth-5" style="height:920px">
+        <img src="logo.jpg" class="circle" width="75" height="75" style="border:2px solid #420707">    
+        <h5 class="brown-text text-darken-2" align="center">ADD A RESTAURANT</h5>
+        <p class="brown-text text-darken-2" align="center">Please fill in the details to sign up.</p>        
+        <div class="row">
+        <form class="col s12">
+            <div class="input-field col s10 center">
+                <input id="name" type="text" class="validate" required>
+                <label for="name">Enter the name of restaurant</label>
+            </div>
+        </form>
+        </div> 
+        <div class="row">
+            <form class="col s12">
+                <div class="input-field col s10 center">
+                    <input id="username" type="text" class="validate" required>
+                    <label for="username">Enter the username</label>
+                </div>
+        </form>
+        </div> 
+        <div class="row">
+        <form class="col s12">   
+            <div class="input-field col s10 center">
+                <input id="password" type="password" class="validate" required>
+                <label for="password">Enter the password</label>
+            </div>
+        </form>
+        </div>    
+        <div class="row">
+            <form class="col s12">   
+                <div class="input-field col s10 center">
+                    <input id="location" type="text" class="validate" required>
+                    <label for="location">Enter the location of your restaurant</label>
+                </div>
+            </form>
+            </div>
+        <div class="row center">
+            <form class="input-field col s10 center">
+                <select id="type">
+                  <option value="" disabled selected>Choose your option</option>
+                  <option value="1">South Indian</option>
+                  <option value="2">North Indian</option>
+                  <option value="3">Pure Veg</option>
+                  <option value="4">Mexican</option>
+                  <option value="5">Italian</option>
+                  <option value="6">Chinese</option>                                                    
+                </select>
+                <label>Select type of restaurant</label>
+            </form> 
+            </div>
+            <div class="row">
+                <form class="col s12">   
+                    <div class="input-field col s10 center">
+                        <input id="table" type="number" class="validate" required>
+                        <label for="table">Enter the number of tables available for booking</label>
+                    </div>
+                </form>
+                </div>
+            <div class="col s4 offset-s4">
+                <a class = "waves-effect brown darken-2 btn" id="rsignup">Sign Up</a>
+        </div>
+        </div>
+        </div>
+        </div>
+    </body> 
+</html>
