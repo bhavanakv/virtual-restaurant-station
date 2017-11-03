@@ -408,13 +408,8 @@ app.post("/api/tbook",function(req,res){
     console.log(date);
     console.log(fdate);
     console.log(moment(time, "h:m A").format("H:M"));
-    connection(); // thats for getting the date but it's not cominf i'll show you
-    con.query("insert into foo values(?)",[fdate],function(err,result){
-        if(err) 
-            throw err;
-        else
-            console.log("Success");
-    });
+    connection();
+    
 });
 
 app.listen(8080, (err, res) => {
