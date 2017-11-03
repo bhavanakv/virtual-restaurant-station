@@ -1,0 +1,99 @@
+<html>
+    <head>
+        <title>Virtual Restaurant Station</title>
+        <meta name = "viewport" content = "width = device-width, initial-scale = 1">      
+        <link rel = "stylesheet"
+           href = "https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel = "stylesheet"
+           href = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"`></script>          
+        <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js">
+        </script> 
+    </head>
+    <style> 
+        .blur{
+            /* CSS rules starting with -webkit, -moz or -ms are
+            CSS3's browser-specific rules. If you use one, use all. */
+            -webkit-filter: blur(2px); /* Safari */
+            -moz-filter: blur(2px); /* Firefox */
+            -ms-filter: blur(2px); /* IE/Edge */
+            filter: blur(2px);
+        }
+        .background { 
+            position: relative;
+            top: 0;
+            left: 0;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .foreground {
+            position: absolute; /* Overlap the previous div */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);/* transparent background */
+        }
+        h3 {
+            padding-top: 50px;
+            text-align: center;
+            color: orange;
+        } 
+        h4 {
+            text-align: center;
+            color: orange;
+        } 
+        h5 {
+            text-align: center;
+            color: orange;
+        } 
+    html {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+
+  }
+    </style>
+    <body>
+        <nav>
+            <div class="nav-wrapper brown darken-2">
+            <a href="#" class="brand-logo">Virtual Restaurant Station</a>
+            <ul id="nav-mobile"class="right hide-on-med-and-down">
+                <li><a href="login_page.html">Login</a></li>
+                <li><a href="signup.html">Sign Up</a></li>
+            </ul>
+            </div>
+        </nav>
+        <div class="background">
+            <img class="blur" src="restaurant.jpg" alt="" width="100%" height="75%">
+            <div class="foreground">
+                <h3>Book The Perfect Place...</h3>
+                <h5>Sign up in seconds for free..</h5>
+                <h5>Book now and beat the crowd!!</h5>
+                <div class="row center" style= padding-top:100px>
+                    <div class="col s4 offset-m4">
+                        <a class="waves-effect brown darken-2 btn" href="search.html">Login as guest user..</a>
+                    </div>
+                </div> 
+            </div>
+        </div>
+        <div class="row" style="padding-top:30px">
+            <!-- Why 2 indents!? -->
+                <div class="col s4 center">
+                    <i class="material-icons center large" style="color: orange">search</i>
+                    <h4>Helping people discover places</h4>
+                    <h6 style="color:black" align="left">We have the information of restaurants and party halls.</h6>
+                    <h6 style="color:black" align="left">So you have all that you need to make an informed choice.</h6>
+                    <h6 style="color:black" align="left">Effortlessly make choices assured that it will be a perfect pick.</h6>
+                </div>
+                <div class="col s4 center">
+                    <i class="material-icons large" style="color: orange">assignment</i>
+                    <h4 style="padding-bottom:38px">Reserve with ease</h4>
+                    <h6 style="color:black" align="left">Book the table or party hall of your choice.</h6>
+                    <h6 style="color:black" align="left">You can also add exclusive coupons and offers from the restaurant or party hall during booking.</h6>
+                </div>
+                <div class="col s4 center">
+                    <i class="material-icons center large" style="color: orange">people</i>
+                    <h4>Find out what other patrons think</h4>
+                    <h6 style="color:black" align="left">Look at the opinion of various other users about the restaurants and party halls.</h6>
+                    <h6 style="color:black" align="left">Rating for restaurant and party halls has also been provided. </h6>
+            </div>
+   </body>
+</html>
