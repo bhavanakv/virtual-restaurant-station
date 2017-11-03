@@ -19,6 +19,7 @@
   "dependencies": {
     "compression": "^1.7.1",
     "cors": "^2.8.4",
+    "helmet": "^3.9.0",
     "moment": "^2.19.1",
     "open": "0.0.5"
   }

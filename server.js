@@ -10,8 +10,10 @@ var jwt = require("jsonwebtoken");
 let compression = require("compression");
 let open = require("open");
 let moment = require("moment");
+let helmet = require("helmet");
 
 dotenv.config();
+app.use(helmet()); // Prevents XSS attacks
 app.use(compression());
 app.use(express.static("public"));
 app.use(bodyParser({extended: true}));
