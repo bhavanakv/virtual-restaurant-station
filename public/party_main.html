@@ -1,0 +1,121 @@
+<html>
+    <head>
+        <title>Party hall</title>
+        <meta name = "viewport" content = "width = device-width, initial-scale = 1">      
+        <link rel = "stylesheet"
+           href = "https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel = "stylesheet"
+           href = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <script type = "text/javascript"
+           src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>           
+        <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js">
+        </script>
+        <script>
+            $(document).ready(function(){
+               $(".button-collapse").sideNav({
+                    menuWidth: 300,
+                    edge: 'left'
+               });
+            });
+        </script> 
+        <style>
+            h4{
+                color: orange;
+                align-content: center;
+            }
+            header, main, footer {
+                padding-left: 400px;
+            }
+            .side{
+                z-index: 1000 !important;
+            }
+            img {
+                display: block; 
+                max-width: 100%;
+            }
+            .center{
+                position: relative;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            html {
+                    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            }        
+        </style>
+    </head>
+    <body>
+        <script>
+            $(document).ready(function(){
+                var name,username;
+                let token=localStorage.getItem("token");
+                    console.log(token);
+                    $.post("http://localhost:8080/api/whoami",{token},(data) => {
+                        if(!data.success) {
+                            Materialize.toast("Login again!",2000);
+                            setTimeout(()=>{
+                                window.location="resto.html";
+                            },3000);
+                        }
+                        name=data.user.name;
+                        username=data.user.username;
+                        console.log(username);
+                        $("#party").click(function(){
+                            console.log(username);
+                            $.post("http://localhost:8080/api/reserve",{username},(data)=>{
+                                console.log(username);
+                                if(!data.success) 
+                                    alert(data.message);
+                                else {
+                                $("#add").html(name+", your reservations are...");
+                                let results = data.reserve.map((e)=>
+                                    `<tr>
+                                        <td>${e.name}</td>
+                                        <td>${new Date(e.d).toDateString()}</td>
+                                        <td>${e.t}</td>
+                                    </tr>`
+                                );
+                                $("#pview").html(results.join());
+                                $("table").css("visibility", "visible");
+                                }
+                            });
+                        });
+                        $("#logout").click(function(){
+                            localStorage.removeItem("token");
+                        });
+                    });
+            });    
+        </script>
+        <nav>
+            <div class="nav-wrapper brown darken-2 side">
+                <a href="#" class="brand-logo center">Virtual Restaurant Station</a>
+                <ul id="nav-mobile"class="right hide-on-med-and-down">
+                    <li><a href="restaurant.html" id="logout">Log out</a></li>
+                </ul>
+            </div>
+        </nav>
+        <ul id="slide-out" class="side-nav fixed" style="transform:translateX(0%)">
+            <li><div class="user-view" style="padding-top:80px">
+                <img class="circle center" src="logo.jpg" width="100" height="100" style="border:2px solid #420707">
+            </div></li>
+            <li><a id="party"><i class="material-icons prefix">assignment</i> View reservations</a></li>
+            <li><a href="#!"><i class="material-icons prefix">mail</i>Notify users</a></li>
+        </ul>
+        <a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a>  
+        <div style="padding-left:500px">
+            <h4 id="add"></h4>
+        </div>
+        <div class="row" style="margin-left: 340px; margin-right: 20px">
+            <table class="striped" style="visibility: hidden;">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody id="pview"></tbody>
+            </table>
+        </div>
+    </body>
+</html>
