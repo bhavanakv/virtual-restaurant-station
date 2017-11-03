@@ -1,0 +1,372 @@
+<html>
+    <head>
+        <title>Search</title>
+        <meta name = "viewport" content = "width = device-width, initial-scale = 1">      
+        <link rel = "stylesheet" href = "https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel = "stylesheet" href = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"`></script>        
+        <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js">
+        </script>
+        <script type="text/javascript">
+          $(document).ready(function() {
+            $('select').material_select(); 
+          });
+       </script>
+        <style>
+          .center{
+                position: relative;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        .card{
+            width: 200px;
+            text-align: center;
+            align-self: center;
+            height:280px;
+        }
+        .card-panel {
+          width:600px;
+          text-align: center;
+          height: 220px;
+          background-image: url("restaurant.jpg");
+        }
+        h4 {
+            padding-top: 50px;
+            color: orange;
+            text-align: center;
+        }
+        </style>
+    </head>
+    <body>
+        <script>
+          $(document).ready(function(){         
+            $("#resto1").click(function(){
+                $.post("http://localhost:8080/api/search",{type:'South Indian'},(data)=>{
+                    if(!data.success) {
+                      $("#restaurants").html("No restaurants added yet");
+                      return;
+                    }
+                    let result = data.resto.map((e)=>
+                        `<div class="row center">
+                            <div class="col s4 offset-s4">
+                              <div class="card-panel center">                                  
+                                  <span class="white-text">
+                                  <img src="south1.jpg" class="circle" width="75" height="75">
+                                  <h5 class="orange-text">${e.name}</h5>
+                                  <p>This restaurant is located at: ${e.location}</p>
+                                </span>
+                                </div>
+                              </div>
+                            </div>
+                        </div>`
+                    );
+                $("#restaurants").html("<i>The list of restaurants are</i>"+"("+result.length+"):");
+                $("#restaurants").append(result.join());
+                });
+            });
+            $("#resto2").click(function(){
+                $.post("http://localhost:8080/api/search",{type:'North Indian'},(data)=>{
+                    if(!data.success) {
+                      $("#restaurants").html("No restaurants added yet");
+                      return;
+                    }
+                    let result = data.resto.map((e)=>
+                        `<div class="row">
+                            <div class="col s4 offset-s4">
+                              <div class="card-panel center">
+                                  <span class="white-text">
+                                  <img src="north2.jpg" class="circle" width="75" height="75">
+                                  <h5 class="orange-text">${e.name}</h5>
+                                  <p>This restaurant is located at: ${e.location}</p>
+                                </span>
+                                </div>
+                              </div>
+                            </div>
+                        </div>`
+                    );
+                $("#restaurants").html("<i>The list of restaurants are</i>"+"("+result.length+"):");
+                $("#restaurants").append(result.join());
+                });
+            });
+            $("#resto3").click(function(){
+                $.post("http://localhost:8080/api/search",{type:'Pure Veg'},(data)=>{
+                    if(!data.success) {
+                      $("#restaurants").html("No restaurants added yet");
+                      return;
+                    }
+                    let result = data.resto.map((e)=>
+                        `<div class="row">
+                            <div class="col s4 offset-s4">
+                              <div class="card-panel center">
+                                  <span class="white-text">
+                                  <img src="pureveg.jpg" class="circle" width="75" height="75">  
+                                  <h5 class="orange-text">${e.name}</h5>
+                                  <p>This restaurant is located at: ${e.location}</p>
+                                </span>
+                                </div>
+                              </div>
+                            </div>
+                        </div>`
+                    );
+                $("#restaurants").html("<i>The list of restaurants are</i>"+"("+result.length+"):");
+                $("#restaurants").append(result.join());
+                });
+              });
+            $("#resto4").click(function(){
+                $.post("http://localhost:8080/api/search",{type:'Italian'},(data)=>{
+                    if(!data.success) {
+                      $("#restaurants").html("No restaurants added yet");
+                      return;
+                    }
+                    let result = data.resto.map((e)=>
+                        `<div class="row">
+                            <div class="col s4 offset-s4">
+                              <div class="card-panel center ">
+                                  <span class="white-text">
+                                  <img src="italian1.jpeg" class="circle" width="75" height="75">
+                                  <h5 class="orange-text">${e.name}</h5>
+                                  <p>This restaurant is located at: ${e.location}</p>
+                                </span>
+                                </div>
+                              </div>
+                            </div>
+                        </div>`    
+                    );
+                $("#restaurants").html("<i>The list of restaurants are</i>"+"("+result.length+"):");
+                $("#restaurants").append(result.join());
+                });
+            });
+            $("#resto5").click(function(){
+                $.post("http://localhost:8080/api/search",{type:'Mexican'},(data)=>{
+                    if(!data.success) {
+                      $("#restaurants").html("No restaurants added yet");
+                      return;
+                    }
+                    let result = data.resto.map((e)=>
+                        `<div class="row">
+                            <div class="col s4 offset-s4">
+                              <div class="card-panel center">
+                                  <span class="white-text">
+                                  <img src="mexican1.jpg" class="circle" width="75" height="75">
+                                  <h5 class="orange-text">${e.name}</h5>
+                                  <p>This restaurant is located at: ${e.location}</p>
+                                </span>
+                                </div>
+                              </div>
+                            </div>
+                        </div>`
+                    );
+                $("#restaurants").html("<i>The list of restaurants are</i>"+"("+result.length+"):");
+                $("#restaurants").append(result.join());
+                });
+            });
+            $("#resto6").click(function(){
+                $.post("http://localhost:8080/api/search",{type:'Chinese'},(data)=>{
+                    if(!data.success) {
+                      $("#restaurants").html("No restaurants added yet");
+                      return;
+                    }
+                    let result = data.resto.map((e)=>
+                          `<div class="row">
+                            <div class="col s4 offset-s4">
+                              <div class="card-panel center">
+                                  <span class="brown-text">
+                                  <img src="chinese.jpeg" class="circle" width="75" height="75">
+                                  <h5 class="orange-text">${e.name}</h5>
+                                  <p>This restaurant is located at: ${e.location}</p>
+                                </span>
+                                </div>
+                              </div>
+                            </div>
+                        </div>`
+                    );
+                $("#restaurants").html("<i>The list of restaurants are</i>"+"("+result.length+"):");
+                $("#restaurants").html(result.join());
+                $("#view").append("");
+                });
+            });
+            $("#review").click(function(){
+                $.get("http://localhost:8080/api/review",(data)=>{
+                  if(!data.success) {
+                    $("#restaurants").html("No reviews added yet");
+                    return; 
+                  }
+                  let results = data.rev.map((e)=>
+                      ` 
+                        <li class="collection-item avatar">
+                        <img src="logo.jpg" alt="" class="circle" width="100" height="100">
+                        <span class="title orange-text">${e.user}</span>
+                        <p>${e.resto}</p>
+                        <p>${e.comment}</p>
+                        <a href="#!" class="secondary-content"><i class="material-icons">grade</i>${e.rating}</a>
+                        </li>` 
+                );
+                $("#restaurants").html("");
+                $("#view").html(results.join());
+                });
+            });
+            $("#search").click(function() {
+              let choice=$("#parameters option:selected").val();
+              $.post("http://localhost:8080/api/psearch",{choice},(data) => {
+                if(!data.success) {
+                      $(".party").html("No party halls added yet");
+                      return;
+                } 
+                console.log(data.par);
+                let result = data.par.map((e)=>
+                        `<div class="row">
+                            <div class="col s4 offset-s4">
+                              <div class="card-panel center">
+                                  <img src="party1.jpg" width="75" height="75">
+                                  <span class="white-text">
+                                  <h5 class="orange-text">${e.name}</h5>
+                                  <p>This party hall is located at: ${e.location}</p>
+                                  <p>The approximate amount is: <span class="orange-text">${e.amount}</span></p> 
+                                </span>
+                                </div>
+                              </div>
+                            </div>
+                        </div>` 
+                      );
+                $(".party").html("<i>The list of party halls are</i>"+"("+result.length+"):");
+                $(".party").append(result.join());
+            });
+          });
+        });  
+        </script>
+        <nav class="nav-extended brown darken-2">
+            <div class="nav-wrapper">
+            <a href="#" class="brand-logo center">Welcome to Virtual Restaurant Station</a>
+            <a href="restaurant.html"><i class="material-icons">arrow_back</i></a>
+            <div class="nav-content">
+                    <ul class="tabs tabs-transparent brown darken-2">
+                      <li class="tab"><a href="#test1" style="color:white">Restaurants</a></li>
+                      <li class="tab"><a href="#test2" style="color:white">Party halls</a></li>
+                    </ul>
+                  </div>
+             </div>
+        </nav>
+    <div id="test1">
+    <h4>Look at restaurants around you</h4>
+    <div class="row center">
+        <div class="col m2">
+          <div class="card">
+            <div class="card-image">
+              <img src="south1.jpg" height="160px">
+              <span class="card-title">South Indian</span>
+            </div>
+            <div class="card-content">
+              <p>South Indian</p>
+            </div>
+            <div class="card-action">
+              <a id="resto1">Search</a>
+            </div>
+          </div>
+        </div>
+        <div class="col m2">
+            <div class="card">
+              <div class="card-image">
+                <img src="north2.jpg" height="160px">
+                <span class="card-title">North Indian</span>
+              </div>
+              <div class="card-content">
+                <p>North Indian</p>
+              </div>
+              <div class="card-action">
+                <a id="resto2">Search</a>
+              </div>
+            </div>
+        </div>
+        <div class="col m2">
+                <div class="card">
+                  <div class="card-image">
+                    <img src="pureveg.jpg" height="160px">
+                    <span class="card-title">Pure veg</span>
+                  </div>
+                  <div class="card-content">
+                    <p>Pure Vegetarian</p>
+                  </div>
+                  <div class="card-action">
+                    <a id="resto3">Search</a>
+                  </div>
+                </div>
+            </div>
+        <div class="col m2">
+            <div class="card">
+              <div class="card-image">
+                <img src="italian1.jpeg" height="160px">
+                <span class="card-title">Italian</span>
+              </div>
+              <div class="card-content">
+                <p>Italian</p>
+              </div>
+              <div class="card-action">
+                <a id="resto4">Search</a>
+              </div>
+            </div>
+          </div>
+          <div class="col m2">
+            <div class="card">
+              <div class="card-image">
+                <img src="mexican1.jpg" height="160px">
+                <span class="card-title">Mexican</span>
+              </div>
+              <div class="card-content">
+                <p>Mexican</p>
+              </div>
+              <div class="card-action">
+                <a id="resto5">Search</a>
+              </div>
+            </div>
+          </div>
+          <div class="col m2">
+            <div class="card">
+              <div class="card-image">
+                <img src="chinese.jpeg" height="160px">
+                <span class="card-title">Chinese</span>
+              </div>
+              <div class="card-content">
+                <p>Chinese</p>
+              </div>
+              <div class="card-action">
+                <a id="resto6">Search</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      <a id="review" class="waves-effect brown darken-2 btn">Look at what other diners say about restaurants</a>
+      <div id="restaurants" class="center-align"></div>
+      <div class="row">
+        <div class="col s6 offset-s3 offset-m3">
+          <ul class="collection" id="view"></ul>
+        </div>
+      </div>
+      </div>
+      
+    <div id="test2">
+    <h4>Look at party halls around you</h4>
+    <br>
+    <h6 align="center">The following choice is based on the approximate amount for reservation of party hall</h6>
+    <h6 align="center">This is the cost of party hall for a day.</h6>
+    <br> 
+    <div class="row center">
+    <div class="col s4 offset-s4">
+      <form class="input-field col s10" style="width:500px">
+          <select id="parameters">
+            <option value="1">Less than 50000</option>
+            <option value="2">Less than 100000 and more than 50000</option>
+            <option value="3">Less than 300000 and more than 100000</option>
+            <option value="4">More than 300000</option>                                                   
+          </select>
+          <label>Select type of restaurant</label>
+      </form>
+      </div>
+      <div class="col s4 offset-s4" style="padding-top:20px">
+          <a class = "waves-effect brown darken-2 btn" id="search">Search</a>
+      </div>
+    </div>
+    <div class="party center" style="padding-top:50px"></div>
+  </div>
+  </body>
+</html>
