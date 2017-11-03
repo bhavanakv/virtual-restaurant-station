@@ -1,0 +1,88 @@
+<html>
+    <head>
+        <title>User Login</title>
+        <meta name = "viewport" content = "width = device-width, initial-scale = 1">      
+        <link rel = "stylesheet" href = "https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel = "stylesheet" href = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <script type = "text/javascript"
+            src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>           
+        <script src = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js">
+        </script>
+        <style>
+            .center{
+                position: relative;
+                left: 50%;
+                transform: translateX(-50%);
+            }  
+            html {
+                font-family: 'Lucida Sans','Verdana';
+            }       
+             body {
+                background-image: url(login.jpg);
+                background-repeat: no-repeat; 
+            }
+        </style>
+    </head>
+    <body>
+        <script>
+            $(document).ready(function(){
+                $("#login").click(function() {
+                let username=$("#username").val();
+                let password=$("#password").val();
+                $.post("http://localhost:8080/api/login",{username,password},(data)=>{
+                    if(data.success) {
+                        localStorage.setItem("token", data.token);
+                        Materialize.toast(data.message,2000,'rounded');
+                        setTimeout(()=> {
+                            window.location="user_main.html";
+                        },2000);
+                    }
+                    else
+                        Materialize.toast(data.message,3000);
+                    });
+                });
+            });
+        </script>
+        <nav>
+            <div class="nav-wrapper brown darken-2">
+            <a href="#" class="brand-logo center">User Login</a>
+            <a href="login_page.html"><i class="material-icons">arrow_back</i></a>
+            
+            </div>
+        </nav>
+        <br>
+        <br>
+        <div class="row">
+        <div class="col s6 center">   
+        <div class="card-panel z-depth-5" style="height:500px">
+        <img src="logo.jpg" class="circle" width="75" height="75" style="border:2px solid #420707" align="center">    
+        <h5 class="brown-text text-darken-2" align="center">USER</h5>
+        <p class="brown-text text-darken-2" align="center">Please login to get access.</p>        
+        <div class="row">
+        <form class="col s12">
+            <div class="input-field col s10 center">
+                <i class="material-icons prefix">face</i>
+                <input id="username" type="text" class="validate" required>
+                <label for="username">Username</label>
+            </div>
+        </form>
+        </div> 
+        <div class="row">
+        <form class="col s12">   
+            <div class="input-field col s10 center">
+                <i class="material-icons prefix">https</i>
+                <input id="password" type="password" class="validate" required>
+                <label for="password">Password</label>
+            </div>
+        </form>
+        </div>
+        <div class="row center" style= "padding-top:3px">
+                <div class="col s4 offset-m4">
+                    <a class = "waves-effect brown darken-2 btn" id="login">Login</a>
+        </div>
+        </div>
+        </div>    
+        </div>
+    </body> 
+</html>
