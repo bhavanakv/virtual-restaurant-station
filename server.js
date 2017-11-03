@@ -446,7 +446,7 @@ app.post("/api/tbook",function(req,res){
                     res.end(JSON.stringify({success:false,message:"Sorry, couldn't book because it was out of the limit."}));
             }); 
         }
-    }); //4 is available and 2 is the no of tables that are booked on same date and same time
+    }); 
 });
 
 app.listen(8080, (err, res) => {
