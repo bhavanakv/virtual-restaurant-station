@@ -297,7 +297,7 @@ app.post("/api/viewRes",function(req,res) {
     connection();
     let date = new Date().toISOString();
     console.log(date);
-    con.query("select u.name as name,tables,code,d,t from reservation r,user u where r.username=u.username and ruser=? and datediff(now(),d)=0",[username],function(err,row,fields){
+    con.query("select u.name as name,tables,code,d,t from reservation r,user u where r.username=u.username and ruser=? and datediff(d,now())=0",[username],function(err,row,fields){
         if(err) throw err;
         if(!row.length)
             res.end(JSON.stringify({success: false, reserve: "No reservations made yet"}));
@@ -352,7 +352,7 @@ app.post("/api/reserve",function(req,res) {
     connection();
     let date = new Date().toISOString();
     console.log(date);
-    con.query("select u.name as name,d,t from p_reserve r,user u where r.username=u.username and puser=? and datediff(now(),d)=0",[username],function(err,row,fields){
+    con.query("select u.name as name,d,t from p_reserve r,user u where r.username=u.username and puser=? and datediff(d,now())=0",[username],function(err,row,fields){
         if(err) throw err;
         if(!row.length)
             res.end(JSON.stringify({success: false, reserve: "No reservations made yet"}));
@@ -424,6 +424,13 @@ app.post("/api/tbook",function(req,res){
                     return;
                 }
             });
+            con.query("select * from reservation where username=? and ruser=? and d=? and t=?",[username,ruser,fdate,ftime],function(err,row1,fields){
+                if(err) throw err;
+                if(row1.length) {
+                    res.end(JSON.stringify({success:false,message: "Sorry, this slot has been booked already"}));
+                    return;
+                }
+            });
             con.query("select sum(tables) as total from reservation where d=? and t=? and ruser=?",[fdate,ftime,ruser],function(err4,r,fields){
                 if(err) throw err;
                 if(!r[0].total)
@@ -436,7 +443,7 @@ app.post("/api/tbook",function(req,res){
                 if(tables+table<=available) {
                     con.query("insert into reservation values(?,?,?,?,?,?)",[username,ruser,promo,tables,fdate,ftime],function(err2,result){
                         if(err2)  {
-                            res.end(JSON.stringify({success:false,message: "Sorry, this slot has already been booked"}));
+                            res.end(JSON.stringify({success:false,message: "Wrong date entered"}));
                         }
                         else    
                             res.end(JSON.stringify({success:true,message: "Your table has been booked successfully!!"}));
@@ -466,9 +473,16 @@ app.post("/api/pbook",function(req,res){
         }
         else {
             puser = row[0].username;
+            con.query("select * from p_reserve where username=? and puser=? and d=? and t=?",[username,puser,fdate,ftime],function(err,row1,fields){
+                if(err) throw err;
+                if(row1.length) {
+                    res.end(JSON.stringify({success:false,message: "Sorry, this slot has been booked already"}));
+                    return;
+                }
+            });
             con.query("insert into p_reserve values(?,?,?,?)",[username,puser,fdate,ftime],function(err2,result){
                 if(err2)  {
-                    res.end(JSON.stringify({success:false,message: "Sorry, this slot has already been booked"}));
+                    res.end(JSON.stringify({success:false,message: "Please check the date and time entered."}));
                 }
                 else    
                     res.end(JSON.stringify({success:true,message: "Party hall has been booked successfully!!"}));
