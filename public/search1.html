@@ -1,0 +1,596 @@
+<html>
+    <head>
+        <title>Search</title>
+        <meta name = "viewport" content = "width = device-width, initial-scale = 1">      
+        <link rel = "stylesheet"
+           href = "https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel = "stylesheet"
+           href = "https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/css/materialize.min.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <script type = "text/javascript"
+           src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>           
+           <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>        </script>
+        
+        <script src="/picker.js"></script>
+        <script src="/picker.time.js"></script>
+        <link href="/default.css" />
+        <link href="/default.time.css" />
+        <script type="text/javascript">
+          $(document).ready(function() {
+            $('select').material_select(); 
+          });
+       </script>
+        <style>
+          .center{
+                position: relative;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        .card{
+            width: 200px;
+            text-align: center;
+            align-self: center;
+            height:280px;
+        }
+        .c1 {
+          width:650px;
+          text-align: center;
+          height: 220px;
+          background: url("restaurant.jpg");
+        }
+        h4 {
+            padding-top: 50px;
+            color: orange;
+            text-align: center;
+        }
+        .c2 {
+            width:650px;
+            text-align: center;
+            height: 600px; 
+        }
+        .c3 {
+            width:500px;
+            text-align: center;
+            height:400px;
+        }
+
+        .c4{
+          width:650px;
+          text-align: center;
+          height: 200px;
+          background: url(party.jpg);
+        }
+        </style>
+    </head>
+    <body>
+        <script>
+          $(document).ready(function(){
+            var resto,phall;
+            $('.datepicker').pickadate({ 
+              selectMonths: true, // Creates a dropdown to control month
+              selectYears: 15, // Creates a dropdown of 15 years to control year,
+              today: 'Today',
+              clear: 'Clear',
+              close: 'Ok',
+              closeOnSelect: false, // Close upon selecting a date
+            });
+            $('.picker').appendTo('body');
+            $('.datepicker').change(() => {
+                dateVal = $("#date").val();
+            });
+            $('.timepicker').change(() => {
+                timeVal = $("#time").val();
+            });
+            $('.timepicker').pickatime();
+                $('.picker').appendTo('body');
+
+            var name,username;
+            let token=localStorage.getItem("token");
+            console.log(token);
+            $.post("http://localhost:8080/api/whoami",{token},(data) => {
+              if(!data.success) {
+                Materialize.toast("Login again!",2000);
+                setTimeout(()=>{
+                  window.location="resto.html";
+                },3000);
+              }
+              name=data.user.name;
+              username=data.user.username;
+            function bookTable() {
+            $("#restaurants").html("");
+            $("#view").html("");
+            $(".card").css("display","none");
+            $("#review").css("display","none");
+            $("h4").html("Please fill in the details to book table");
+            $(".r").html(resto);
+            $("#book_card").css("display","block");
+                $("#tbook").click(function(){
+                  var restaurant = resto;
+                  var date = $(".datepicker").pickadate('picker').get('value');
+                  console.log(date);
+                  var time = $(".timepicker").pickatime('picker').get('value');
+                  var tables = $("#tables").val();
+                  var promo = $("#code").val();
+                  $.post("http://localhost:8080/api/tbook",{username,restaurant,date,time,tables,promo},(data)=>{
+                      if(!data.success)
+                        alert(data.message);
+                      else
+                        Materialize.toast(data.message,2000,"rounded");
+                  });
+                });
+              }  
+              
+          function bookHall() {
+            $("#restaurants").html("");
+            $("#view").html("");
+            $(".card").css("display","none");
+            $("#review").css("display","none");
+            $("h4").html("Please fill in the details to book party hall");
+            $("h6").html("");
+            $("#book_card").css("display","none");
+            $('select').material_select('destroy');
+            $("#search").css("display","none");
+            $("#party_card").css("display","block");
+            $(".party").html("");
+            $("#l").html("");
+            $("h5").html(phall);
+            $("#pbook").click(function(){
+                var hall = phall;
+                var date = $("#pdate").pickadate('picker').get('value');
+                var time = $("#ptime").pickatime('picker').get('value');
+                console.log(date+" "+time+" "+hall);
+                $.post("http://localhost:8080/api/pbook",{username,hall,date,time},(data)=>{
+                    if(!data.success)
+                      alert(data.message);
+                    else
+                      Materialize.toast(data.message,2000,"rounded");
+                  });
+              });
+            }  
+
+            $("#resto1").click(function(){
+                $.post("http://localhost:8080/api/search",{type:'South Indian'},(data)=>{
+                    if(!data.success) {
+                      $("#restaurants").html("No restaurants added yet");
+                      return;
+                    }
+                    let result = data.resto.map((e)=>
+                        `<div class="row center">
+                            <div class="col s4 offset-s4">
+                                <div class="card c1 center">                                  
+                                        <img src="south1.jpg" class="circle" width="75" height="75">
+                                        <h5 class="orange-text">${e.name}</h5>
+                                        <p class="white-text">This restaurant is located at: ${e.location}</p>
+                                    <div class="card-action">
+                                    <a class="book"><b>Book a table</b></a>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                        </div>`
+                    );
+                $("#restaurants").html("<i>The list of restaurants are</i>"+"("+result.length+"):");
+                $("#restaurants").append(result.join());
+                $(".book").click(function(e){
+                   resto = $(this).parent().parent().children(".orange-text").text();
+                   bookTable(resto);
+                }); 
+                });
+            });
+            $("#resto2").click(function(){
+                $.post("http://localhost:8080/api/search",{type:'North Indian'},(data)=>{
+                    if(!data.success) {
+                      $("#restaurants").html("No restaurants added yet");
+                      return;
+                    }
+                    let result = data.resto.map((e)=>
+                        `<div class="row">
+                            <div class="col s4 offset-s4">
+                              <div class="card c1 center">
+                                  <img src="north2.jpg" class="circle" width="75" height="75">
+                                  <h5 class="orange-text">${e.name}</h5>
+                                  <p class="white-text">This restaurant is located at: ${e.location}</p>
+                                <div class="card-action">
+                                    <a class="book"><b>Book a table</b></a>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                        </div>`
+                    );
+                $("#restaurants").html("<i>The list of restaurants are</i>"+"("+result.length+"):");
+                $("#restaurants").append(result.join());
+                $(".book").click(function(e){
+                   resto = $(this).parent().parent().children(".orange-text").text();
+                   bookTable(resto);
+                }); 
+                });
+            });
+            $("#resto3").click(function(){
+                $.post("http://localhost:8080/api/search",{type:'Pure Veg'},(data)=>{
+                    if(!data.success) {
+                      $("#restaurants").html("No restaurants added yet");
+                      return;
+                    }
+                    let result = data.resto.map((e)=>
+                        `<div class="row">
+                            <div class="col s4 offset-s4">
+                              <div class="card c1 center">
+                                  <img src="pureveg.jpg" class="circle" width="75" height="75">  
+                                  <h5 class="orange-text">${e.name}</h5>
+                                  <p class="white-text">This restaurant is located at: ${e.location}</p>
+                                <div class="card-action">
+                                    <a class="book"><b>Book a table</b></a>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                        </div>`
+                    );
+                $("#restaurants").html("<i>The list of restaurants are</i>"+"("+result.length+"):");
+                $("#restaurants").append(result.join());
+                $(".book").click(function(e){
+                   resto = $(this).parent().parent().children(".orange-text").text();
+                   bookTable(resto);
+                }); 
+                });
+              });
+            $("#resto4").click(function(){
+                $.post("http://localhost:8080/api/search",{type:'Italian'},(data)=>{
+                    if(!data.success) {
+                      $("#restaurants").html("No restaurants added yet");
+                      return;
+                    }
+                    let result = data.resto.map((e)=>
+                        `<div class="row">
+                            <div class="col s4 offset-s4">
+                              <div class="card c1 center ">
+                                  <span class="white-text">
+                                  <img src="italian1.jpeg" class="circle" width="75" height="75">
+                                  <h5 class="orange-text">${e.name}</h5>
+                                  <p class="white-text">This restaurant is located at: ${e.location}</p>
+                                </span>
+                                <div class="card-action center">
+                                    <a class"book"><b>Book a table</b></a>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                        </div>`    
+                    );
+                $("#restaurants").html("<i>The list of restaurants are</i>"+"("+result.length+"):");
+                $("#restaurants").append(result.join());
+                $(".book").click(function(e){
+                   resto = $(this).parent().parent().children(".orange-text").text();
+                   bookTable(resto);
+                }); 
+                });
+            });
+            $("#resto5").click(function(){
+                $.post("http://localhost:8080/api/search",{type:'Mexican'},(data)=>{
+                    if(!data.success) {
+                      $("#restaurants").html("No restaurants added yet");
+                      return;
+                    }
+                    let result = data.resto.map((e)=> 
+                        `<div class="row">
+                            <div class="col s4 offset-s4">
+                              <div class="card c1 center">
+                                  <img src="mexican1.jpg" class="circle" width="75" height="75">
+                                  <h5 class="orange-text">${e.name}</h5>
+                                  <p class="white-text">This restaurant is located at: ${e.location}</p>
+                                <div class="card-action">
+                                    <a class="book"><b>Book a table</b></a>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                        </div>`
+                    );
+                $("#restaurants").html("<i>The list of restaurants are</i>"+"("+result.length+"):");
+                $("#restaurants").append(result.join());
+                $(".book").click(function(e){
+                   resto = $(this).parent().parent().children(".orange-text").text();
+                   bookTable(resto);
+                }); 
+                });
+            });
+            $("#resto6").click(function(){
+                $.post("http://localhost:8080/api/search",{type:'Chinese'},(data)=>{
+                    if(!data.success) {
+                      $("#restaurants").html("No restaurants added yet");
+                      return;
+                    }
+                    let result = data.resto.map((e)=>
+                          `<div class="row">
+                            <div class="col s4 offset-s4">
+                              <div class="card c1 center">
+                                  <img src="chinese.jpeg" class="circle" width="75" height="75">
+                                  <h5 class="orange-text">${e.name}</h5>
+                                  <p class="white-text">This restaurant is located at: ${e.location}</p>
+                                <div class="card-action">
+                                    <a class="book"><b>Book a table</b></a>
+                                  </div>
+                              </div>
+                              </div>
+                            </div>
+                        </div>`
+                    );
+                $("#restaurants").html("<i>The list of restaurants are</i>"+"("+result.length+"):");
+                $("#restaurants").append(result.join());
+                $("#view").append("");
+                $(".book").click(function(e){
+                   resto = $(this).parent().parent().children(".orange-text").text();
+                   bookTable(resto);
+                }); 
+                });
+            }); 
+            
+            $("#review").click(function(){
+                $.get("http://localhost:8080/api/review",(data)=>{
+                  if(!data.success) {
+                    $("#restaurants").html("No reviews added yet");
+                    return; 
+                  }
+                  let results = data.rev.map((e)=>
+                      ` 
+                        <li class="collection-item avatar">
+                        <img src="logo.jpg" alt="" class="circle" width="100" height="100">
+                        <span class="title orange-text">${e.user}</span>
+                        <p>${e.resto}</p>
+                        <p>${e.comment}</p>
+                        <a href="#!" class="secondary-content"><i class="material-icons">grade</i>${e.rating}</a>
+                        </li>` 
+                );
+                $("#restaurants").html("");
+                $("#view").html(results.join());
+                });
+            });
+            $("#search").click(function() {
+              let choice=$("#parameters option:selected").val();
+              $.post("http://localhost:8080/api/psearch",{choice},(data) => {
+                if(!data.success) {
+                      $(".party").html("No party halls added yet");
+                      return;
+                } 
+                console.log(data.par);
+                let result = data.par.map((e)=>
+                        `<div class="row">
+                            <div class="col s4 offset-s4">
+                              <div class="card c4 center">
+                                  <h4 class="green-text text-darken-4">${e.name}</h4>
+                                  <h6 class="brown-text text-darken-4"><b>This party hall is located at: ${e.location}</b></h6>
+                                  <h6 class="brown-text text-darken-4"><b>The approximate amount is: <span class="orange-text">${e.amount}</b></h6> 
+                                  <div class="card-action center">
+                                    <a class="hall" class="green-text text-darken-4"><b>Book the party hall</b></a>
+                              </div>
+                              </div>
+                            </div>
+                        </div>` 
+                      );
+                $(".party").html("<i>The list of party halls are</i>"+"("+result.length+"):");
+                $(".party").append(result.join());
+                $(".hall").click(function(e){
+                   phall = $(this).parent().parent().children(".green-text").text();
+                   bookHall(phall);
+                }); 
+            });
+          });
+        });
+    });  
+        </script>
+        <nav class="nav-extended brown darken-2">
+            <div class="nav-wrapper">
+            <a href="#" class="brand-logo center">Welcome to Virtual Restaurant Station</a>
+            <a href="user_main.html"><i class="material-icons">arrow_back</i></a>
+            <div class="nav-content">
+                    <ul class="tabs tabs-transparent brown darken-2">
+                      <li class="tab"><a href="#test1" style="color:white">Restaurants</a></li>
+                      <li class="tab"><a href="#test2" style="color:white">Party halls</a></li>
+                    </ul>
+                  </div>
+             </div>
+        </nav>
+    <div id="test1">
+    <h4>Look at restaurants around you</h4>
+    <div class="row center">
+        <div class="col m2">
+          <div class="card">
+            <div class="card-image">
+              <img src="south1.jpg" height="160px">
+              <span class="card-title">South Indian</span>
+            </div>
+            <div class="card-content">
+              <p>South Indian</p>
+            </div>
+            <div class="card-action">
+              <a id="resto1">Search</a>
+            </div>
+          </div>
+        </div>
+        <div class="col m2">
+            <div class="card">
+              <div class="card-image">
+                <img src="north2.jpg" height="160px">
+                <span class="card-title">North Indian</span>
+              </div>
+              <div class="card-content">
+                <p>North Indian</p>
+              </div>
+              <div class="card-action">
+                <a id="resto2">Search</a>
+              </div>
+            </div>
+        </div>
+        <div class="col m2">
+                <div class="card">
+                  <div class="card-image">
+                    <img src="pureveg.jpg" height="160px">
+                    <span class="card-title">Pure veg</span>
+                  </div>
+                  <div class="card-content">
+                    <p>Pure Vegetarian</p>
+                  </div>
+                  <div class="card-action">
+                    <a id="resto3">Search</a>
+                  </div>
+                </div>
+            </div>
+        <div class="col m2">
+            <div class="card">
+              <div class="card-image">
+                <img src="italian1.jpeg" height="160px">
+                <span class="card-title">Italian</span>
+              </div>
+              <div class="card-content">
+                <p>Italian</p>
+              </div>
+              <div class="card-action">
+                <a id="resto4">Search</a>
+              </div>
+            </div>
+          </div>
+          <div class="col m2">
+            <div class="card">
+              <div class="card-image">
+                <img src="mexican1.jpg" height="160px">
+                <span class="card-title">Mexican</span>
+              </div>
+              <div class="card-content">
+                <p>Mexican</p>
+              </div>
+              <div class="card-action">
+                <a id="resto5">Search</a>
+              </div>
+            </div>
+          </div>
+          <div class="col m2">
+            <div class="card">
+              <div class="card-image">
+                <img src="chinese.jpeg" height="160px">
+                <span class="card-title">Chinese</span>
+              </div>
+              <div class="card-content">
+                <p>Chinese</p>
+              </div>
+              <div class="card-action">
+                <a id="resto6">Search</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      <a id="review" class="waves-effect brown darken-2 btn">Look at what other diners say about restaurants</a>
+      <div id="restaurants" class="center-align"></div>
+      <div class="row">
+        <div class="col s6 offset-s3 offset-m3">
+          <ul class="collection" id="view"></ul>
+        </div>
+      </div>
+      <div class="row">
+          <div class="col s6 offset-s3 offset-m3">
+              <div class="card c2" id="book_card" style="display:none">
+                  <br>
+                  <div class="card-content">
+                      <div class="row">
+                          <h5 class="r center orange-text"></h5>
+                          <form class="col s12">
+                              <div class="row">
+                                  <div class="input-field col s10 center">
+                                      <i class="material-icons prefix">event_note</i>
+                                      <input id="date" type="text" class="datepicker" required>
+                                      <label for="date">Select a date</label>
+                                  </div>
+                              </div>
+                          </form>
+                          <form class="col s12">
+                              <div class="row">
+                                  <div class="input-field col s10 center">
+                                      <i class="material-icons prefix">restore</i>
+                                      <input id="time" type="text" class="timepicker" required></textarea>
+                                      <label for="time">Select a time</label>
+                                  </div>
+                              </div>
+                          </form>
+                          <form class="col s12"> 
+                              <div class="row">  
+                                  <div class="input-field col s10 center">
+                                      <i class="material-icons prefix">event_seat</i>
+                                      <input id="tables" type="number" class="validate" required>
+                                      <label for="tables">Number of tables</label>
+                                  </div>
+                              </div>
+                          </form>
+                          <form class="col s12"> 
+                              <div class="row">  
+                                  <div class="input-field col s10 center">
+                                      <i class="material-icons prefix">card_membership</i>
+                                      <input id="code" type="text" class="validate" required>
+                                      <label for="code">Enter the promo code</label>
+                                  </div>
+                              </div>
+                          </form>
+                      </div>
+                      <a class="btn waves-effect waves-light brown center" id="tbook">Book  a table</a>
+                  </div>  
+              </div>    
+          </div>
+      </div>
+      </div>
+      
+    <div id="test2">
+    <h4>Look at party halls around you</h4>
+    <br>
+    <h6 align="center">The following choice is based on the approximate amount for reservation of party hall</h6>
+    <h6 align="center">This is the cost of party hall for a day.</h6>
+    <br> 
+    <div class="row center">
+    <div class="col s4 offset-s4 param">
+      <form class="input-field col s10" style="width:500px">
+          <select id="parameters">
+            <option value="1">Less than 50000</option>
+            <option value="2">Less than 100000 and more than 50000</option>
+            <option value="3">Less than 300000 and more than 100000</option>
+            <option value="4">More than 300000</option>                                                   
+          </select>
+          <label id="l">Select type of restaurant</label>
+      </form>
+      </div>
+      <div class="col s4 offset-s4" style="padding-top:20px">
+          <a class = "waves-effect brown darken-2 btn" id="search">Search</a>
+      </div>
+    </div>
+    <div class="party center" style="padding-top:50px"></div>
+    <div class="row">
+        <div class="col s6 offset-s4 offset-m4">
+            <div class="card c3" id="party_card" style="display:none">
+                <br>
+                <div class="card-content">
+                    <div class="row">
+                        <h5 class="center"></h5>
+                        <form class="col s12">
+                            <div class="row">
+                                <div class="input-field col s10 center">
+                                    <i class="material-icons prefix">event_note</i>
+                                    <input id="pdate" type="text" class="datepicker" required>
+                                    <label for="pdate">Select a date</label>
+                                </div>
+                            </div>
+                        </form>
+                        <form class="col s12">
+                            <div class="row">
+                                <div class="input-field col s10 center">
+                                    <i class="material-icons prefix">restore</i>
+                                    <input id="ptime" type="text" class="timepicker" required></textarea>
+                                    <label for="ptime">Select a time</label>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <a class="btn waves-effect waves-light brown center" id="pbook">Book the hall</a>
+                </div>  
+            </div>    
+        </div>
+    </div>  
+  </div>
+  </body>
+</html>
