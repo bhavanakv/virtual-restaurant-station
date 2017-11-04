@@ -407,7 +407,7 @@ app.post("/api/tbook",function(req,res){
     console.log(fdate);
     var ruser,available,table;
     let ftime = moment(time, "h:mm A").format("H:mm");
-    connection();
+    connection(); 
     con.query("select username,tables from restaurant where name=?",[restaurant],function(err,row,fields){
         if(err) throw err;
         if(!row.length) {
