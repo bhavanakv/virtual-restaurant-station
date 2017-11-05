@@ -431,6 +431,18 @@ app.post("/api/tbook",function(req,res){
                     return;
                 }
             });
+            con.query("call code_check(?,?,@total);",[promo,username],function(err,rows){
+                if(err) throw err;
+                else {
+                    con.query("select @total as total",function(err3,rows){
+                        if(err3) throw err3;
+                        else if(rows[0].total>0) {
+                            res.end(JSON.stringify({success:false, message:"Offer has been already used"}));
+                            return;
+                        }
+                    });
+                }
+            });
             con.query("select sum(tables) as total from reservation where d=? and t=? and ruser=?",[fdate,ftime,ruser],function(err4,r,fields){
                 if(err) throw err;
                 if(!r[0].total)
@@ -443,7 +455,7 @@ app.post("/api/tbook",function(req,res){
                 if(tables+table<=available) {
                     con.query("insert into reservation values(?,?,?,?,?,?)",[username,ruser,promo,tables,fdate,ftime],function(err2,result){
                         if(err2)  {
-                            res.end(JSON.stringify({success:false,message: "Wrong date entered"}));
+                            res.end(JSON.stringify({success:false,message: "Please check the date and time entered"}));
                         }
                         else    
                             res.end(JSON.stringify({success:true,message: "Your table has been booked successfully!!"}));
@@ -457,7 +469,7 @@ app.post("/api/tbook",function(req,res){
 });
 
 //party hall booking
-app.post("/api/pbook",function(req,res){
+app.post("/api/pbook",function(req,res){ 
     res.writeHead(200,{"Content-Type":"application/json"});
     let {username,hall,date,time} = req.body;
     let fdate = moment(new Date(date)).format("YYYY-MM-DD");
