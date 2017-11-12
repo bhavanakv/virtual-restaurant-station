@@ -417,13 +417,15 @@ app.post("/api/tbook",function(req,res){
         else {
             ruser = row[0].username;
             available = row[0].tables;
-            con.query("select * from offers where code=?",[promo],function(err1,rows,fields){
-                if(err1) throw err1;
-                if(!rows.length) {
-                    res.end(JSON.stringify({success:false,message: "Promo code not valid"}));
-                    return;
-                }
-            });
+            if(promo!="") {
+                con.query("select * from offers where code=?",[promo],function(err1,rows,fields){
+                    if(err1) throw err1;
+                    if(!rows.length) {
+                        res.end(JSON.stringify({success:false,message: "Promo code not valid"}));
+                        return;
+                    }
+                });
+            }
             con.query("select * from reservation where username=? and ruser=? and d=? and t=?",[username,ruser,fdate,ftime],function(err,row1,fields){
                 if(err) throw err;
                 if(row1.length) {
@@ -453,13 +455,24 @@ app.post("/api/tbook",function(req,res){
                 tables = Number(tables);
                 console.log(tables);
                 if(tables+table<=available) {
-                    con.query("insert into reservation values(?,?,?,?,?,?)",[username,ruser,promo,tables,fdate,ftime],function(err2,result){
-                        if(err2)  {
-                            res.end(JSON.stringify({success:false,message: "Please check the date and time entered"}));
-                        }
-                        else    
-                            res.end(JSON.stringify({success:true,message: "Your table has been booked successfully!!"}));
-                    });
+                    if(promo!="") {
+                        con.query("insert into reservation values(?,?,?,?,?,?)",[username,ruser,promo,tables,fdate,ftime],function(err2,result){
+                            if(err2)  {
+                                res.end(JSON.stringify({success:false,message: "Please check the date and time entered"}));
+                            }
+                            else    
+                                res.end(JSON.stringify({success:true,message: "Your table has been booked successfully!!"}));
+                        });
+                    }
+                    else {
+                        con.query("insert into reservation values(?,?,NULL,?,?,?)",[username,ruser,tables,fdate,ftime],function(err2,result){
+                            if(err2) {
+                                res.end(JSON.stringify({success:false,message: "Please check the date and time entered"}));
+                            }
+                            else    
+                                res.end(JSON.stringify({success:true,message: "Your table has been booked successfully!!"}));
+                        });
+                    }
                 }
                 else
                     res.end(JSON.stringify({success:false,message:"Sorry, couldn't book because it was out of the limit."}));
