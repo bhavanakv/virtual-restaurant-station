@@ -417,6 +417,13 @@ app.post("/api/tbook",function(req,res){
         else {
             ruser = row[0].username;
             available = row[0].tables;
+            con.query("select * from restaurant where username=? and timediff(o_time,?)<0 and timediff(c_time,?)>0",[ruser,ftime,ftime],function(err6,results,fields){
+                if(err6) throw err6;
+                if(!results.length) {
+                    res.end(JSON.stringify({success:false,message: "Wrong time entered"}));
+                    return;
+                }
+            });
             if(promo!="") {
                 con.query("select * from offers where code=?",[promo],function(err1,rows,fields){
                     if(err1) throw err1;
@@ -437,14 +444,12 @@ app.post("/api/tbook",function(req,res){
                 if(err) throw err;
                 else {
                     con.query("select @total as total",function(err3,rows){
+                        console.log(rows[0].total);
                         if(err3) throw err3;
                         else if(rows[0].total>0) {
                             res.end(JSON.stringify({success:false, message:"Offer has been already used"}));
-                            return;
                         }
-                    });
-                }
-            });
+                        else {
             con.query("select sum(tables) as total from reservation where d=? and t=? and ruser=?",[fdate,ftime,ruser],function(err4,r,fields){
                 if(err) throw err;
                 if(!r[0].total)
@@ -476,10 +481,16 @@ app.post("/api/tbook",function(req,res){
                 }
                 else
                     res.end(JSON.stringify({success:false,message:"Sorry, couldn't book because it was out of the limit."}));
+
             }); 
         }
     }); 
+}
 });
+        }
+    });
+});
+
 
 //party hall booking
 app.post("/api/pbook",function(req,res){ 
