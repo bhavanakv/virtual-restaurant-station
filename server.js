@@ -326,18 +326,32 @@ app.post("/api/add_offers",function(req,res) {
     });
 });
 
-//delete offers
-app.post("/api/delete_offers",function(req,res) {
+//finding number of reservations
+app.post("/api/delete_offers1",function(req,res) {
     res.writeHead(200,{"Content-Type": "application/json"});
     let {username,dpromo} = req.body;
     connection();
-    con.query("select * from offers where code=?",[dpromo],function(err,rows,fields){
+    con.query("select * from offers where code=? and ruser=?",[dpromo,username],function(err,rows,fields){
         if(err) throw err;
         if(!rows.length) {
             res.end(JSON.stringify({success:false, message:"No offer with this promo exists"}));
             return;
         }
     });
+    con.query("select count(*) as total from reservation where code=? and datediff(d,now())>=0",[dpromo],function(err,results,fields){
+        if(err) throw err;
+        if(results[0].total==0)
+            res.end(JSON.stringify({success:true,message:"There are no reservations with this promo code"}));
+        else
+            res.end(JSON.stringify({success:true,message:`There are ${results[0].total} reservations using this code.`}));
+    });
+});
+
+//delete offers
+app.post("/api/delete_offers2",function(req,res){
+    res.writeHead(200,{"Content-Type": "application/json"});
+    let {username,dpromo} = req.body;
+    connection();
     con.query("delete from offers where ruser=? and code=?",[username,dpromo],(err,result)=>{
         if(err) throw err;
         else  
@@ -415,78 +429,83 @@ app.post("/api/tbook",function(req,res){
             return;
         }
         else {
+            var flag=0;
             ruser = row[0].username;
             available = row[0].tables;
             con.query("select * from restaurant where username=? and timediff(o_time,?)<0 and timediff(c_time,?)>0",[ruser,ftime,ftime],function(err6,results,fields){
                 if(err6) throw err6;
                 if(!results.length) {
                     res.end(JSON.stringify({success:false,message: "Wrong time entered"}));
+                    flag=1;
                     return;
                 }
-            });
-            if(promo!="") {
-                con.query("select * from offers where code=?",[promo],function(err1,rows,fields){
-                    if(err1) throw err1;
-                    if(!rows.length) {
-                        res.end(JSON.stringify({success:false,message: "Promo code not valid"}));
-                        return;
+                else {
+                    if(promo!="") {
+                        con.query("select * from offers where code=? and ruser=?",[promo,ruser],function(err1,rows,fields){
+                            if(err1) throw err1;
+                            if(!rows.length) {
+                                res.end(JSON.stringify({success:false,message: "Promo code not valid"}));
+                                return;
+                            }
+                        });
+                    }
+                    con.query("select * from reservation where username=? and ruser=? and d=? and t=?",[username,ruser,fdate,ftime],function(err,row1,fields){
+                        if(err) throw err;
+                        if(row1.length) {
+                            res.end(JSON.stringify({success:false,message: "Sorry, this slot has been booked already"}));
+                            return;
+                        }
+                    });
+                    con.query("call code_check(?,?,@total);",[promo,username],function(err,rows){
+                        if(err) throw err;
+                        else {
+                            con.query("select @total as total",function(err3,rows){
+                            if(err3) throw err3;
+                            else if(rows[0].total>0 && promo!="") {
+                                res.end(JSON.stringify({success:false, message:"Offer has been already used"}));
+                            }
+                            else {
+                                con.query("select sum(tables) as total from reservation where d=? and t=? and ruser=?",[fdate,ftime,ruser],function(err4,r,fields){
+                                if(err) throw err;
+                                if(!r[0].total)
+                                    table = 0;
+                                else    
+                                    table = r[0].total;
+                                    tables = Number(tables);
+                                    if(tables+table<=available) {
+                                    if(promo!="") {
+                                        if(flag!=1) {
+                                        con.query("insert into reservation values(?,?,?,?,?,?)",[username,ruser,promo,tables,fdate,ftime],function(err2,result){
+                                        if(err2)  {
+                                            res.end(JSON.stringify({success:false,message: "Please check the date and time entered"}));
+                                        }
+                                        else    
+                                            res.end(JSON.stringify({success:true,message: "Your table has been booked successfully!!"}));
+                                        });
+                                        }
+                                    }           
+                                    else {
+                                        if(flag!=1) {
+                                        con.query("insert into reservation values(?,?,NULL,?,?,?)",[username,ruser,tables,fdate,ftime],function(err2,result){
+                                        if(err2) {
+                                        res.end(JSON.stringify({success:false,message: "Please check the date and time entered"}));
+                                        }
+                                        else    
+                                            res.end(JSON.stringify({success:true,message: "Your table has been booked successfully!!"}));
+                                        });
+                                        }
+                                    }
+                                }
+                                else
+                                    res.end(JSON.stringify({success:false,message:"Sorry, couldn't book because it was out of the limit."}));
+            
+                                }); 
+                            }
+                        }); 
                     }
                 });
             }
-            con.query("select * from reservation where username=? and ruser=? and d=? and t=?",[username,ruser,fdate,ftime],function(err,row1,fields){
-                if(err) throw err;
-                if(row1.length) {
-                    res.end(JSON.stringify({success:false,message: "Sorry, this slot has been booked already"}));
-                    return;
-                }
             });
-            con.query("call code_check(?,?,@total);",[promo,username],function(err,rows){
-                if(err) throw err;
-                else {
-                    con.query("select @total as total",function(err3,rows){
-                        console.log(rows[0].total);
-                        if(err3) throw err3;
-                        else if(rows[0].total>0) {
-                            res.end(JSON.stringify({success:false, message:"Offer has been already used"}));
-                        }
-                        else {
-            con.query("select sum(tables) as total from reservation where d=? and t=? and ruser=?",[fdate,ftime,ruser],function(err4,r,fields){
-                if(err) throw err;
-                if(!r[0].total)
-                    table = 0;
-                else    
-                    table = r[0].total;
-                console.log(table); 
-                tables = Number(tables);
-                console.log(tables);
-                if(tables+table<=available) {
-                    if(promo!="") {
-                        con.query("insert into reservation values(?,?,?,?,?,?)",[username,ruser,promo,tables,fdate,ftime],function(err2,result){
-                            if(err2)  {
-                                res.end(JSON.stringify({success:false,message: "Please check the date and time entered"}));
-                            }
-                            else    
-                                res.end(JSON.stringify({success:true,message: "Your table has been booked successfully!!"}));
-                        });
-                    }
-                    else {
-                        con.query("insert into reservation values(?,?,NULL,?,?,?)",[username,ruser,tables,fdate,ftime],function(err2,result){
-                            if(err2) {
-                                res.end(JSON.stringify({success:false,message: "Please check the date and time entered"}));
-                            }
-                            else    
-                                res.end(JSON.stringify({success:true,message: "Your table has been booked successfully!!"}));
-                        });
-                    }
-                }
-                else
-                    res.end(JSON.stringify({success:false,message:"Sorry, couldn't book because it was out of the limit."}));
-
-            }); 
-        }
-    }); 
-}
-});
         }
     });
 });
@@ -525,6 +544,20 @@ app.post("/api/pbook",function(req,res){
             });
         }
     }); 
+});
+
+//view notifications
+app.post("/api/view_notif",function(req,res){
+    let {username} = req.body;
+    res.writeHead(200,{"Content-Type":"application/json"});
+    connection();
+    con.query("select * from notification where username=?",[username],function(err,result,fields){
+        if(err) throw err;
+        if(!result.length)
+            res.end(JSON.stringify({success:false, message:"No notifications yet!!"}));
+        else
+            res.end(JSON.stringify({success:true, message:result}));
+    });
 });
 
 app.listen(8080, (err, res) => {
