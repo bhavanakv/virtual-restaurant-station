@@ -83,14 +83,17 @@
                                 if(!data.success) 
                                     alert(data.view);
                                 else {
-                                    let result = data.view.map((e)=>
-                                        `<li class="collection-item avatar">
+                                    let result = data.view.map((e)=>{
+                                        if (e.code != "")
+                                            return (
+                                            `<li class="collection-item avatar">
                                         <i class="material-icons circle brown">book</i>
                                         <span class="title orange-text">${e.ruser}</span>
                                         <p>${e.type}</p>
                                         <a href="#!" class="secondary-content">${e.code}</a>
-                                        </li>` 
-                                    );
+                                        </li>`);
+                                        else return ""; 
+                                    });
                                     $(".title").html("Offers available");
                                     $("#view").html(result.join());
                                 }
@@ -170,6 +173,31 @@
                                 });
                             });
                         });
+
+                        $("#notif").click(function(){
+                            $.post("http://localhost:8080/api/view_notif",{username},(data)=>{
+                                if(!data.success)
+                                    alert(data.message);
+                                else
+                                {
+                                    console.log(data.message);
+                                    let notification = data.message.map((e)=>
+                                    `<div class="row">
+                                        <div class="col s6 m6">
+                                            <div class="card">
+                                                <div class="card-content">
+                                                    <span class="card-title orange-text">${e.who}</span>
+                                                    <p>${e.message}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>`
+                                    );
+                                    $(".ping").html("<span style='color: white'>Notification list..<span>");
+                                    $(".ping").append(notification.join());
+                                }
+                            });
+                        });
                         
                         $("#logout").click(function(){
                             localStorage.removeItem("token");
@@ -190,6 +218,7 @@
             <li><div class="divider"></div></li>
             <li><a class="subheader"><i class="material-icons">cake</i> Party hall</a></li>
             <li><a id="party">Book a party hall</a></li>
+            <li><a id="notif">Notifications</a></li>
             <li><a id="logout" href="restaurant.html">Logout</a></li>
             <li><a href="#!"></a></li>
         </ul>
@@ -350,5 +379,6 @@
                 </div>    
             </div>
         </div>  
+    <div class="ping" style="margin-left: 600px"></div>    
     </body>
 </html>
