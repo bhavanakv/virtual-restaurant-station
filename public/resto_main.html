@@ -130,14 +130,27 @@
                             $("table").css("visibility","hidden");
                             $("#add").html(" ");
                             $("#offerCard").css("display","none");
+                            $("#notify").css("display","none");
                             $("#doffer").click(function(){
                                 let dpromo=$("#dpromo").val();
                                 console.log(dpromo);
                                 if(dpromo=="")
                                     Materialize.toast("Please fill in the details",2000,"rounded");
                                 else {
-                                $.post("http://localhost:8080/api/delete_offers",{username,dpromo},(data)=>{
-                                    Materialize.toast(data.message,2000,"rounded");
+                                $.post("http://localhost:8080/api/delete_offers1",{username,dpromo},(data)=>{
+                                    if(!data.success)
+                                        Materialize.toast(data.message,2000,"rounded");
+                                    else {    
+                                        var r = confirm(data.message+". Are you sure that you want to delete the offer?");
+                                        if(r==true) {
+                                            $.post("http://localhost:8080/api/delete_offers2",{username,dpromo},(data)=>{
+                                                if(data.success)
+                                                    Materialize.toast("Offer has been deleted successfully!",2000,"rounded");
+                                            });
+                                        }
+                                        else
+                                            Materialize.toast("Offer has not been deleted.",2000,"rounded");
+                                    }
                                 });
                             }
                         });
@@ -148,7 +161,11 @@
                             $("#add").html(" ");
                             $("#offerCard").css("display","none");
                             $("#notification").css("display","block");
-                            console.log(username);
+                            console.log(username+" "+name);
+                            let msg = $("#textarea2").val();
+                            $.post("http://localhost:8080/api/add_notif",{msg,name},(data)=>{
+                                Materialize.toast(data.message);
+                            });
                     });
                 });
             });
@@ -260,7 +277,7 @@
                                 </div>
                             </form>
                         </div>
-                        <a class="btn-floating halfway-fab waves-effect waves-light orange right-align" id="aoffer"><i class="material-icons">send</i></a>
+                        <a class="btn-floating halfway-fab waves-effect waves-light orange right-align" id="notify"><i class="material-icons">send</i></a>
                     </div>
                 </div>
             </div>
