@@ -139,9 +139,11 @@ app.post("/api/signup",function(req,res) {
 
 //restaurant co-ordinator registration
 app.post("/api/rsignup",function(req,res) {
-    let {name,username,password,location,type,table}=req.body;
+    let {name,username,password,location,type,table,otime,ctime}=req.body;
     res.writeHead(200, {"Content-Type": "application/json"});
     connection();
+    let fotime = moment(otime, "h:mm A").format("H:mm");
+    let fctime = moment(ctime, "h:mm A").format("H:mm");
     con.query("select * from restaurant where binary username=?",[username],function(err,results) {
         if(err) throw err;
         if(results.length) { 
@@ -151,7 +153,7 @@ app.post("/api/rsignup",function(req,res) {
     bcrypt.hash(password,10,(err,hash)=> {
         if(err) throw err;
         console.log(hash);
-        con.query("insert into restaurant values(?,?,?,?,?,?)",[username,hash,name,location,type,table],(err) => {
+        con.query("insert into restaurant values(?,?,?,?,?,?,?,?)",[username,hash,name,location,type,table,fotime,fctime],(err) => {
             if(err) {
                res.end(JSON.stringify({success:false, message:"Unknown error occurred.Try again."}));
             }
@@ -351,11 +353,29 @@ app.post("/api/delete_offers1",function(req,res) {
 app.post("/api/delete_offers2",function(req,res){
     res.writeHead(200,{"Content-Type": "application/json"});
     let {username,dpromo} = req.body;
+    var name,msg;
     connection();
-    con.query("delete from offers where ruser=? and code=?",[username,dpromo],(err,result)=>{
-        if(err) throw err;
-        else  
-            res.end(JSON.stringify({success:true, message: "Offer has been deleted successfully!"}));
+        con.query("select name from restaurant where username=?",[username],function(err1,results,fields){
+            if(err1) throw err1;
+            name = results[0].name;
+            msg = "The offer with which you have reserved has been removed. Your reservation still holds but without offer. Sorry for the inconvinence";
+            con.query("select username from reservation where code=?",[dpromo],(err,result,fields)=>{
+                if(err) throw err;
+                console.log(result);
+                var i;
+                for(i=0;i<result.length;i++) {
+                    con.query("insert into notification values(?,?,?)",[result[i].username,name,msg],(err1,notify)=>{
+                        if(err1) throw err1;
+                    });
+                }
+                con.query("delete from offers where ruser=? and code=?",[username,dpromo],(err,results)=>{
+                    if(err) throw err;
+                if(i==result.length)
+                    res.end(JSON.stringify({success:true,message:"Offer has been deleted successfully"}));  
+                else
+                    res.end(JSON.stringify({success:false,message:"Sorry couldn't send the notifications."}));              
+            });
+        });
     });
 });
 
@@ -557,6 +577,27 @@ app.post("/api/view_notif",function(req,res){
             res.end(JSON.stringify({success:false, message:"No notifications yet!!"}));
         else
             res.end(JSON.stringify({success:true, message:result}));
+    });
+});
+
+//add notifications 
+app.post("/api/addNotif",function(req,res){
+    let {msg,name} = req.body;
+    res.writeHead(200,{"Content-Type":"application/json"});
+    connection();
+    con.query("select username from user where notify='y'",(err,result,fields)=>{
+        if(err) throw err;
+        console.log(result);
+        var i;
+        for(i=0;i<result.length;i++) {
+            con.query("insert into notification values(?,?,?)",[result[i].username,name,msg],(err1,notify)=>{
+                if(err1) throw err1;
+            });
+        }
+        if(i==result.length)
+            res.end(JSON.stringify({success:true,notif:"Notifications sent successfully!"}));  
+        else
+            res.end(JSON.stringify({success:false,notif:"Sorry couldn't send the notifications."}));  
     });
 });
 
