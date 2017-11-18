@@ -130,7 +130,7 @@
                             $("table").css("visibility","hidden");
                             $("#add").html(" ");
                             $("#offerCard").css("display","none");
-                            $("#notify").css("display","none");
+                            $("#notification").css("display","none");
                             $("#doffer").click(function(){
                                 let dpromo=$("#dpromo").val();
                                 console.log(dpromo);
@@ -162,10 +162,16 @@
                             $("#offerCard").css("display","none");
                             $("#notification").css("display","block");
                             console.log(username+" "+name);
-                            let msg = $("#textarea2").val();
-                            $.post("http://localhost:8080/api/add_notif",{msg,name},(data)=>{
-                                Materialize.toast(data.message);
+                            $("#notify1").click(function(){
+                                let msg = $("#textarea2").val();
+                                console.log(msg);
+                            $.post("http://localhost:8080/api/addNotif",{msg,name},(data)=>{
+                                if(!data.success)
+                                    alert(data.notif);
+                                else
+                                    Materialize.toast(data.notif);
                             });
+                        });
                     });
                 });
             });
@@ -277,7 +283,7 @@
                                 </div>
                             </form>
                         </div>
-                        <a class="btn-floating halfway-fab waves-effect waves-light orange right-align" id="notify"><i class="material-icons">send</i></a>
+                        <a class="btn-floating halfway-fab waves-effect waves-light orange right-align" id="notify1"><i class="material-icons">send</i></a>
                     </div>
                 </div>
             </div>
