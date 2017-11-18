@@ -13,6 +13,11 @@
             $(document).ready(function() {
             $('select').material_select();
             });
+        </script>
+        <script src="/picker.js"></script>
+        <script src="/picker.time.js"></script>
+        <link href="/default.css" />
+        <link href="/default.time.css" />
          </script>
         <style>
             .center{
@@ -32,6 +37,12 @@ html {
     <body>
         <script>
             $(document).ready(function(){
+                let timeVal;
+                $('.timepicker').change(() => {
+                            timeVal = $("#time").val();
+                        });
+                        $('.timepicker').pickatime();
+                            $('.picker').appendTo('body');
                 $("#rsignup").click(function(){
                     let name=$("#name").val();
                     let username=$("#username").val();
@@ -39,7 +50,9 @@ html {
                     let location=$("#location").val();
                     let type=$("#type option:selected").text();
                     let table=$("#table").val();
-                    $.post("http://localhost:8080/api/rsignup",{name,username,password,location,type,table},(data)=>{
+                    var otime = $("#otime").pickatime('picker').get('value');
+                    var ctime = $("#ctime").pickatime('picker').get('value');
+                    $.post("http://localhost:8080/api/rsignup",{name,username,password,location,type,table,otime,ctime},(data)=>{
                         if(data.success) {
                         Materialize.toast("Registered successfully!", 2000,'rounded');
                             setTimeout(() => {
@@ -62,7 +75,7 @@ html {
         <br>
         <div class="row">
         <div class="col s6 center">   
-        <div class="card-panel z-depth-5" style="height:920px">
+        <div class="card-panel z-depth-5" style="height:1150px">
         <img src="logo.jpg" class="circle" width="75" height="75" style="border:2px solid #420707">    
         <h5 class="brown-text text-darken-2" align="center">ADD A RESTAURANT</h5>
         <p class="brown-text text-darken-2" align="center">Please fill in the details to sign up.</p>        
@@ -119,7 +132,25 @@ html {
                         <label for="table">Enter the number of tables available for booking</label>
                     </div>
                 </form>
+            </div>
+            <form class="col s12">
+                <div class="row">
+                    <div class="input-field col s10 center">
+                        <i class="material-icons prefix">restore</i>
+                        <input id="otime" type="text" class="timepicker" required></textarea>
+                        <label for="otime">Select opening time</label>
+                    </div>
                 </div>
+            </form>
+            <form class="col s12">
+                <div class="row">
+                    <div class="input-field col s10 center">
+                        <i class="material-icons prefix">restore</i>
+                        <input id="ctime" type="text" class="timepicker" required></textarea>
+                        <label for="ctime">Select closing time</label>
+                    </div>
+                </div>
+            </form>
             <div class="col s4 offset-s4">
                 <a class = "waves-effect brown darken-2 btn" id="rsignup">Sign Up</a>
         </div>
