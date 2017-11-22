@@ -38,16 +38,30 @@ html {
                         choice1='y';
                     else
                         choice1='n';
-                    $.post("http://localhost:8080/api/signup",{name,username,password,email,choice1},(data) =>
-                    {
-                        if(data.success) {
-                        Materialize.toast("User registered successfully!", 2000,'rounded');
-                            setTimeout(() => {
-                            window.location="user.html";
-                            }, 2000);
+
+                    let fd = new FormData();
+                    fd.append("name", name);
+                    fd.append("username", username);
+                    fd.append("password", password);
+                    fd.append("email", email);
+                    fd.append("choice1", choice1);
+                    fd.append("dp", $("#dp")[0].files[0]);
+
+                    $.ajax({
+                        url: "http://localhost:8080/api/signup",
+                        method: "POST",
+                        processData: false,
+                        contentType: false,
+                        dataType: "json",
+                        data: fd,
+                        success: (data) => {
+                            if (data.success) {
+                                Materialize.toast("User successfully registered!", 3000, "rounded");
+                                window.location = "/user.html";
+                            }
+                            else
+                                Materialize.toast(data.message, 3000, "rounded");
                         }
-                        else
-                            Materialize.toast(data.message,3000,'rounded');
                     });
                 });
             });
@@ -97,7 +111,11 @@ html {
                     <label for="email" data-error="wrong" data-success="right">Enter the email </label>
                 </div>
             </form>
-            </div>
+        </div>
+        <div class="row">
+            <input id="dp" type="file" accept="image/*" />
+            <label for="dp">Choose a profile picture</label>
+        </div>
         <div class="row"  align="center">
             <form>
                   <input type="checkbox" style="all: initial;" id="check" checked="checked"/>

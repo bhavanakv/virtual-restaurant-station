@@ -52,16 +52,34 @@ html {
                     let table=$("#table").val();
                     var otime = $("#otime").pickatime('picker').get('value');
                     var ctime = $("#ctime").pickatime('picker').get('value');
-                    $.post("http://localhost:8080/api/rsignup",{name,username,password,location,type,table,otime,ctime},(data)=>{
-                        if(data.success) {
-                        Materialize.toast("Registered successfully!", 2000,'rounded');
-                            setTimeout(() => {
-                            window.location="resto.html";
-                            }, 2000);
+
+                    let fd = new FormData();
+                    fd.append("name", name);
+                    fd.append("username", username);
+                    fd.append("password", password);
+                    fd.append("location", location);
+                    fd.append("type", type);
+                    fd.append("otime", otime);
+                    fd.append("ctime", ctime);
+                    fd.append("table", table);
+                    fd.append("dp", $("#dp")[0].files[0]);
+
+                    $.ajax({
+                        url: "http://localhost:8080/api/rsignup",
+                        method: "POST",
+                        processData: false,
+                        contentType: false,
+                        dataType: "json",
+                        data: fd,
+                        success: (data) => {
+                            if (data.success) {
+                                Materialize.toast("Successfully registered!", 3000, "rounded");
+                                window.location = "/resto.html";
+                            }
+                            else
+                                Materialize.toast(data.message, 3000, "rounded");
                         }
-                        else
-                            Materialize.toast(data.message,3000,'rounded');
-                });
+                    });
             });
         });
         </script>
@@ -151,6 +169,10 @@ html {
                     </div>
                 </div>
             </form>
+            <div class="row">
+                <input id="dp" type="file" accept="image/*" />
+                <label for="dp">Choose a profile picture</label>
+            </div>
             <div class="col s4 offset-s4">
                 <a class = "waves-effect brown darken-2 btn" id="rsignup">Sign Up</a>
         </div>

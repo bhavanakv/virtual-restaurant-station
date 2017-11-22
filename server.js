@@ -10,13 +10,17 @@ let compression = require("compression");
 let open = require("open");
 let moment = require("moment");
 let helmet = require("helmet");
+let formidable = require("formidable");
+let fs = require("fs");
 
 dotenv.config();
 app.use(helmet()); // Prevents XSS attacks
 app.use(compression());
 app.use(express.static("public"));
+app.use("/users", express.static("./users"));
+app.use("/rusers", express.static("./rusers"));
 app.use(bodyParser({extended: true}));
-app.use(cors());
+app.use(cors());;
 
 var con;
 function connection() {
@@ -117,21 +121,45 @@ app.post("/api/plogin",function(req,res) {
 app.post("/api/signup",function(req,res) {
     let {name,username,password,email,choice1}=req.body;
     res.writeHead(200, {"Content-Type": "application/json"});
-    connection();
-    con.query("select * from user where binary username=?",[username],function(err,results) {
-        if(err) throw err;
-        if(results.length) { 
-            res.end(JSON.stringify({success:false, message:"Username exists"}));
+
+    let form = new formidable.IncomingForm();
+    form.parse(req, (err, fields, files) => {
+        if (err) {
+            res.end(JSON.stringify({success: false, message: "Couldn't parse request"}));
             return;
         }
-    bcrypt.hash(password,10,(err,hash)=> {
-        if(err) throw err;
-        console.log(hash);
-        con.query("insert into user values(?,?,?,?,?)",[username,hash,name,email,choice1],(err) => {
-            if(err) {
-               res.end(JSON.stringify({success:false, message:"Unknown error occurred.Try again."}));
+
+        let {name, username, password, email, choice1} = fields;
+        let {dp} = files;
+
+        if (!fs.existsSync("./users"))
+            fs.mkdirSync("./users");
+        if (!fs.existsSync(`./users/${username}`))
+            fs.mkdirSync(`./users/${username}`);
+        
+        fs.rename(dp.path, `./users/${username}/${dp.name}`, (e) => {
+            if (e) {
+                res.end(JSON.stringify({success: false, message: "Couldn't upload DP"}));
+                return;
             }
-            res.end(JSON.stringify({success:true, message:"User registered successfully"}));
+
+            connection();
+            con.query("select * from user where binary username=?",[username],function(err,results) {
+                if(err) throw err;
+                if(results.length) { 
+                    res.end(JSON.stringify({success:false, message:"Username exists"}));
+                    return;
+                }
+                bcrypt.hash(password,10,(err,hash)=> {
+                    if(err) throw err;
+                    console.log(hash);
+                    con.query("insert into user values(?,?,?,?,?,?)",[username,hash,name,email,choice1,`./users/${username}/${dp.name}`],(err) => {
+                        if(err) {
+                        res.end(JSON.stringify({success:false, message:"Unknown error occurred.Try again."}));
+                        }
+                        res.end(JSON.stringify({success:true, message:"User registered successfully"}));
+                    });
+                });
             });
         });
     });
@@ -139,25 +167,45 @@ app.post("/api/signup",function(req,res) {
 
 //restaurant co-ordinator registration
 app.post("/api/rsignup",function(req,res) {
-    let {name,username,password,location,type,table,otime,ctime}=req.body;
     res.writeHead(200, {"Content-Type": "application/json"});
-    connection();
-    let fotime = moment(otime, "h:mm A").format("H:mm");
-    let fctime = moment(ctime, "h:mm A").format("H:mm");
-    con.query("select * from restaurant where binary username=?",[username],function(err,results) {
-        if(err) throw err;
-        if(results.length) { 
-            res.end(JSON.stringify({success:false, message:"Username exists"}));
-            return;
-        }
-    bcrypt.hash(password,10,(err,hash)=> {
-        if(err) throw err;
-        console.log(hash);
-        con.query("insert into restaurant values(?,?,?,?,?,?,?,?)",[username,hash,name,location,type,table,fotime,fctime],(err) => {
-            if(err) {
-               res.end(JSON.stringify({success:false, message:"Unknown error occurred.Try again."}));
+
+    let form = new formidable.IncomingForm();
+    form.parse(req, (err, fields, files) => {
+        if (err) throw err;
+
+        let {name,username,password,location,type,table,otime,ctime}=fields;
+        let {dp} = files;
+
+        if (!fs.existsSync("./rusers"))
+            fs.mkdirSync("./rusers");
+        if (!fs.existsSync(`./rusers/${username}`))
+            fs.mkdirSync(`./rusers/${username}`);
+        
+        fs.rename(dp.path, `./rusers/${username}/${dp.name}`, (e) => {
+            if (e) {
+                res.end(JSON.stringify({success: false, message: "Couldn't upload DP"}));
+                return;
             }
-            res.end(JSON.stringify({success:true, message:"Registered successfully"}));
+
+            connection();
+            let fotime = moment(otime, "h:mm A").format("H:mm");
+            let fctime = moment(ctime, "h:mm A").format("H:mm");
+            con.query("select * from restaurant where binary username=?",[username],function(err,results) {
+                if(err) throw err;
+                if(results.length) { 
+                    res.end(JSON.stringify({success:false, message:"Username exists"}));
+                    return;
+                }
+            bcrypt.hash(password,10,(err,hash)=> {
+                if(err) throw err;
+                console.log(hash);
+                con.query("insert into restaurant values(?,?,?,?,?,?,?,?,?)",[username,hash,name,location,type,table,fotime,fctime, `./rusers/${username}/${dp.name}`],(err) => {
+                    if(err) {
+                       res.end(JSON.stringify({success:false, message:"Unknown error occurred.Try again."}));
+                    }
+                    res.end(JSON.stringify({success:true, message:"Registered successfully"}));
+                    });
+                });
             });
         });
     });
@@ -290,6 +338,24 @@ app.post("/api/whoami",function(req,res) {
             res.end(JSON.stringify({success: true, user: decoded}));
         }
     });
+});
+
+app.get("/api/user/:username", (req, res) => {
+    connection();
+    con.query("SELECT username, name, email, notify, dp FROM user WHERE username = ?", [req.params.username], (err, results) => {
+        if (err) throw err;
+
+        res.json(results[0]);
+    })
+});
+
+app.get("/api/ruser/:username", (req, res) => {
+    connection();
+    con.query("SELECT dp FROM restaurant WHERE username = ?", [req.params.username], (err, results) => {
+        if (err) throw err;
+
+        res.json(results[0]);
+    })
 });
 
 //view table reservations

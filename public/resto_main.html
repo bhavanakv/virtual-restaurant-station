@@ -79,7 +79,11 @@
                         }
                         name=data.user.name;
                         username=data.user.username;
-                        console.log(username+" "+name);
+
+                        $.get("http://localhost:8080/api/ruser/" + username, (data) => {
+                            $("#dp").attr("src", data.dp);
+                        });
+
                         $("#reserve").click(function() {
                             $("#offerCard").css("display","none");
                             $("#deleteCard").css("display","none");
@@ -186,7 +190,7 @@
         </nav>
         <ul id="slide-out" class="side-nav fixed" style="transform:translateX(0%)">
             <li><div class="user-view" style="padding-top:80px">
-                <img class="circle center" src="logo.jpg" width="100" height="100" style="border:2px solid #420707">
+                <img id="dp" class="circle center" src="logo.jpg" width="100" height="100" style="border:2px solid #420707">
             </div></li>
             <li><a id="reserve"><i class="material-icons prefix">assignment</i> View reservations</a></li>
             <li><a id="offer"><i class="material-icons prefix">local_offer</i> Add offers</a></li>
