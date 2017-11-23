@@ -241,7 +241,7 @@ app.post("/api/search",function(req,res) {
     res.writeHead(200, {"Content-Type": "application/json"});
     console.log(type);
     connection();
-    con.query("select name,location from restaurant where type=?",[type],function(err,rows,fields) {
+    con.query("select name,location,dp,o_time,c_time from restaurant where type=?",[type],function(err,rows,fields) {
         if(err) throw err;
         if (!rows.length) {
             res.end(JSON.stringify({success:false, resto:"No restaurants"}));
@@ -257,7 +257,7 @@ app.post("/api/search",function(req,res) {
 app.get("/api/review",function(req,res) {
     res.writeHead(200, {"Content-Type": "application/json"});
     connection();
-    con.query("select u.name as user,r.name as resto,comment,rating from user u,restaurant r,review r1 where u.username=r1.user and r.username=r1.ruser",function(err,rows,fields) {
+    con.query("select u.name as user,r.name as resto,u.dp as dp,comment,rating from user u,restaurant r,review r1 where u.username=r1.user and r.username=r1.ruser",function(err,rows,fields) {
         if(err) throw err;
         if (!rows.length) {
             res.end(JSON.stringify({success:false, rev:"No reviews added yet"}));

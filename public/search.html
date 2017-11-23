@@ -52,7 +52,7 @@
                             <div class="col s4 offset-s4">
                               <div class="card-panel center">                                  
                                   <span class="white-text">
-                                  <img src="south1.jpg" class="circle" width="75" height="75">
+                                  <img src=${e.dp} class="circle" width="75" height="75">
                                   <h5 class="orange-text">${e.name}</h5>
                                   <p>This restaurant is located at: ${e.location}</p>
                                 </span>
@@ -76,7 +76,7 @@
                             <div class="col s4 offset-s4">
                               <div class="card-panel center">
                                   <span class="white-text">
-                                  <img src="north2.jpg" class="circle" width="75" height="75">
+                                  <img src=${e.dp} class="circle" width="75" height="75">
                                   <h5 class="orange-text">${e.name}</h5>
                                   <p>This restaurant is located at: ${e.location}</p>
                                 </span>
@@ -100,7 +100,7 @@
                             <div class="col s4 offset-s4">
                               <div class="card-panel center">
                                   <span class="white-text">
-                                  <img src="pureveg.jpg" class="circle" width="75" height="75">  
+                                  <img src=${e.dp} class="circle" width="75" height="75">  
                                   <h5 class="orange-text">${e.name}</h5>
                                   <p>This restaurant is located at: ${e.location}</p>
                                 </span>
@@ -124,7 +124,7 @@
                             <div class="col s4 offset-s4">
                               <div class="card-panel center ">
                                   <span class="white-text">
-                                  <img src="italian1.jpeg" class="circle" width="75" height="75">
+                                  <img src=${e.dp} class="circle" width="75" height="75">
                                   <h5 class="orange-text">${e.name}</h5>
                                   <p>This restaurant is located at: ${e.location}</p>
                                 </span>
@@ -148,7 +148,7 @@
                             <div class="col s4 offset-s4">
                               <div class="card-panel center">
                                   <span class="white-text">
-                                  <img src="mexican1.jpg" class="circle" width="75" height="75">
+                                  <img src=${e.dp} class="circle" width="75" height="75">
                                   <h5 class="orange-text">${e.name}</h5>
                                   <p>This restaurant is located at: ${e.location}</p>
                                 </span>
@@ -172,7 +172,7 @@
                             <div class="col s4 offset-s4">
                               <div class="card-panel center">
                                   <span class="brown-text">
-                                  <img src="chinese.jpeg" class="circle" width="75" height="75">
+                                  <img src=${e.dp} class="circle" width="75" height="75">
                                   <h5 class="orange-text">${e.name}</h5>
                                   <p>This restaurant is located at: ${e.location}</p>
                                 </span>
@@ -195,7 +195,7 @@
                   let results = data.rev.map((e)=>
                       ` 
                         <li class="collection-item avatar">
-                        <img src="logo.jpg" alt="" class="circle" width="100" height="100">
+                        <img src=${e.dp} alt="" class="circle" width="100" height="100">
                         <span class="title orange-text">${e.user}</span>
                         <p>${e.resto}</p>
                         <p>${e.comment}</p>
