@@ -73,8 +73,10 @@ html {
                         data: fd,
                         success: (data) => {
                             if (data.success) {
-                                Materialize.toast("Successfully registered!", 3000, "rounded");
-                                window.location = "/resto.html";
+                                Materialize.toast("Successfully registered!",3000,"rounded");
+                                setTimeout(() => {
+                                    window.location="resto.html";
+                                }, 2000);
                             }
                             else
                                 Materialize.toast(data.message, 3000, "rounded");
@@ -93,7 +95,7 @@ html {
         <br>
         <div class="row">
         <div class="col s6 center">   
-        <div class="card-panel z-depth-5" style="height:1150px">
+        <div class="card-panel z-depth-5" style="height:1190px">
         <img src="logo.jpg" class="circle" width="75" height="75" style="border:2px solid #420707">    
         <h5 class="brown-text text-darken-2" align="center">ADD A RESTAURANT</h5>
         <p class="brown-text text-darken-2" align="center">Please fill in the details to sign up.</p>        

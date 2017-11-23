@@ -35,7 +35,7 @@
         .c1 {
           width:650px;
           text-align: center;
-          height: 220px;
+          height: 300px;
           background: url("restaurant.jpg");
         }
         h4 {
@@ -161,6 +161,8 @@
                                         <img src=${e.dp} class="circle" width="75" height="75">
                                         <h5 class="orange-text">${e.name}</h5>
                                         <p class="white-text">This restaurant is located at: ${e.location}</p>
+                                        <p class="white-text">Opened at:${e.o_time}</p>
+                                  <p class="white-text">Closed at:${e.c_time}</p>
                                     <div class="card-action">
                                     <a class="book"><b>Book a table</b></a>
                                   </div>
@@ -190,6 +192,8 @@
                                   <img src=${e.dp} class="circle" width="75" height="75">
                                   <h5 class="orange-text">${e.name}</h5>
                                   <p class="white-text">This restaurant is located at: ${e.location}</p>
+                                  <p class="white-text">Opened at:${e.o_time}</p>
+                                  <p class="white-text">Closed at:${e.c_time}</p>
                                 <div class="card-action">
                                     <a class="book"><b>Book a table</b></a>
                                   </div>
@@ -219,6 +223,8 @@
                                   <img src=${e.dp} class="circle" width="75" height="75">  
                                   <h5 class="orange-text">${e.name}</h5>
                                   <p class="white-text">This restaurant is located at: ${e.location}</p>
+                                  <p class="white-text">Opened at:${e.o_time}</p>
+                                  <p class="white-text">Closed at:${e.c_time}</p>
                                 <div class="card-action">
                                     <a class="book"><b>Book a table</b></a>
                                   </div>
@@ -244,14 +250,14 @@
                     let result = data.resto.map((e)=>
                         `<div class="row">
                             <div class="col s4 offset-s4">
-                              <div class="card c1 center ">
-                                  <span class="white-text">
-                                  <img src=${e.dp} class="circle" width="75" height="75">
-                                  <h5 class="orange-text">${e.name}</h5>
-                                  <p class="white-text">This restaurant is located at: ${e.location}</p>
-                                </span>
-                                <div class="card-action center">
-                                    <a class"book"><b>Book a table</b></a>
+                              <div class="card c1 center">
+                                    <img src=${e.dp} class="circle" width="75" height="75">
+                                    <h5 class="orange-text">${e.name}</h5>
+                                    <p class="white-text">This restaurant is located at: ${e.location}</p>
+                                    <p class="white-text">Opened at:${e.o_time}</p>
+                                    <p class="white-text">Closed at:${e.c_time}</p>
+                                  <div class="card-action">
+                                      <a class="book"><b>Book a table</b></a>
                                   </div>
                                 </div>
                               </div>
@@ -279,6 +285,8 @@
                                   <img src=${e.dp} class="circle" width="75" height="75">
                                   <h5 class="orange-text">${e.name}</h5>
                                   <p class="white-text">This restaurant is located at: ${e.location}</p>
+                                  <p class="white-text">Opened at:${e.o_time}</p>
+                                  <p class="white-text">Closed at:${e.c_time}</p>
                                 <div class="card-action">
                                     <a class="book"><b>Book a table</b></a>
                                   </div>
@@ -308,6 +316,8 @@
                                   <img src=${e.dp} class="circle" width="75" height="75">
                                   <h5 class="orange-text">${e.name}</h5>
                                   <p class="white-text">This restaurant is located at: ${e.location}</p>
+                                  <p class="white-text">Opened at:${e.o_time}</p>
+                                  <p class="white-text">Closed at:${e.c_time}</p>
                                 <div class="card-action">
                                     <a class="book"><b>Book a table</b></a>
                                   </div>
