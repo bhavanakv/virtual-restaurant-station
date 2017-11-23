@@ -124,7 +124,7 @@
                                     Materialize.toast("Please fill in the details",2000,"rounded");
                                 else {
                                     $.post("http://localhost:8080/api/add_offers",{username,offer,promo},(data)=>{
-                                        Materialize.toast(data.message,2000,"rounded");
+                                        Materialize.toast(data.message,5000,"rounded");
                                 });
                             }
                         });
